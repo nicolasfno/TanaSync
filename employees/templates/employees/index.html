@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,34 +8,89 @@
     <link rel="stylesheet" href="{% static 'employees/style.css' %}">
 </head>
 <body>
-    <div class="global_container">
-        <div class ="left_container ">
-        <div class="nav">
-            <a href="#" ><img src="{% static 'employees/logo.png' %}" alt="Logo" href="#"></a>
-            <hr>
-            <a href="#">Demandes d'abscences</a>
-            <a href="#">Fiches de paie</a>
-            <a href="#">Planning</a>
-            <a href="#">Connexion</a>
-            <a href="#">Messagerie</a>
-            <hr>
-        </div>
 
-        </div>
+    <!-- sidebar gauche -->
+    <div class="sidebar">
 
-        <div class="right_container">
-            <div class="img_container">
-                <img src="{% static 'employees/logo.png' %}" alt="Logo">
-            </div>
-            <footer>
-                <p>© 2026 Tanasync. Tous droits réservés.</p>
-            </footer>
-            
-        </div>
+        <img src="{% static 'employees/logo.png' %}" alt="logo">
+        <h4>TANASYNC</h4>
+        <p>Gestion des employés</p>
+
+        <hr>
+
+        <a href="#">Accueil</a>
+        <a href="#">Demandes d'absences</a>
+        <a href="#">Fiches de paie</a>
+        <a href="#">Planning</a>
+        <a href="#">Messagerie</a>
+
+        <hr>
+
+        <a href="#">Connexion</a>
 
     </div>
-    
 
-    
+    <!-- contenu a droite -->
+    <div class="main">
+
+        <!-- grande image avec texte dessus -->
+        <div class="banner">
+            <img src="{% static 'employees/logo.png' %}" alt="banniere">
+            <div class="banner_text">
+                <h1>TANASYNC</h1>
+                <p>Gestion des employés</p>
+            </div>
+        </div>
+
+        <!-- texte de presentation -->
+        <div class="section">
+            <h2>Bienvenue</h2>
+            <hr>
+            <p>
+                Gérez facilement vos absences, consultez vos fiches de paie,
+                accédez à votre planning et communiquez avec votre équipe.
+            </p>
+            <a href="#" class="btn">Commencer</a>
+        </div>
+
+        <!-- les 3 cards -->
+        <div class="row">
+
+            <div class="card">
+                <img src="{% static 'employees/logo.png' %}" alt="absences">
+                <div class="card_content">
+                    <h4>Absences</h4>
+                    <p>Faites vos demandes d'absences facilement.</p>
+                    <a href="#">Voir</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="{% static 'employees/logo.png' %}" alt="fiches">
+                <div class="card_content">
+                    <h4>Fiches de paie</h4>
+                    <p>Consultez tous vos bulletins de salaire.</p>
+                    <a href="#">Voir</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="{% static 'employees/logo.png' %}" alt="planning">
+                <div class="card_content">
+                    <h4>Planning</h4>
+                    <p>Accedez a votre agenda et vos horaires.</p>
+                    <a href="#">Voir</a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- footer -->
+        <footer>
+            <p>© 2026 Tanasync. Tous droits réservés.</p>
+        </footer>
+
+    </div>
+
 </body>
 </html>
