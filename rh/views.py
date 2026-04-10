@@ -66,3 +66,5 @@ def modifier_conge(request, id):
             return JsonResponse({"error": "Congé introuvable"}, status=404)
         except json.JSONDecodeError:
             return JsonResponse({"error": "JSON invalide"}, status=400)
+        
+
