@@ -3,7 +3,8 @@ from rh.models import Conge, ficheDePaie
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
-
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse, Http404
 # Create your views here.
 def home_employee(request):
     return render(request, "employees/index.html")
@@ -44,3 +45,23 @@ def annuler_conge(request, id):
         conge.delete()
         return JsonResponse({"message": "Congé annulé"})
     
+
+@login_required
+def my_pay_slips(request):
+    fiches = ficheDePaie.objects.filter(employee__user=request.user).order_by('-year', '-month')
+    
+    return render(request, 'employees/my_fiches.html', {'fiches': fiches})
+
+@login_required
+def download_pay_slip(request, fiche_id):
+    try:
+        # On récupère la fiche ET on vérifie qu'elle appartient bien au user
+        fiche = ficheDePaie.objects.get(id=fiche_id, employee__user=request.user)
+    except ficheDePaie.DoesNotExist:
+        raise Http404("Fiche introuvable ou accès refusé")
+
+    # On prépare la réponse pour forcer le téléchargement
+    response = HttpResponse(fiche.pdf_file, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="Fiche_Paie_{fiche.month}_{fiche.year}.pdf"'
+    
+    return response
