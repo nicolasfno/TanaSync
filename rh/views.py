@@ -3,6 +3,7 @@ from rh.models import Conge, ficheDePaie
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
+from utils import create_file  # Assurez-vous d'avoir une fonction pour créer un PDF
 # Create your views here.
 def liste_conges(request):
     if request.method == 'GET':
@@ -68,3 +69,49 @@ def modifier_conge(request, id):
             return JsonResponse({"error": "JSON invalide"}, status=400)
         
 
+from django.contrib.auth.decorators import user_passes_test
+
+def is_hr(user):
+    return user.is_staff or user.groups.filter(name='RH').exists()
+
+@user_passes_test(is_hr)
+def create_pay_slip(request):
+    if request.method == 'POST':
+        employee_id = request.POST.get('employee_id')
+        name = request.POST.get('name')
+        month = request.POST.get('month')
+        year = request.POST.get('year')
+        amount = request.POST.get('amount')
+        pdf_content = create_file(name, month, year, amount)
+        filename = f"bulletin_{month}_{year}.pdf"
+
+        fiche = ficheDePaie(
+            employee_id=employee_id,
+            month=month,
+            year=year,
+            amount=amount,
+            pdf_file=pdf_content
+        )
+        fiche.pdf_file.save(filename, pdf_content, save=True)
+        return JsonResponse({'message': 'Fiche de paie stockée', 'id': fiche.id})
+    
+@user_passes_test(is_hr)
+def list_pay_slips(request):
+    employee_id = request.GET.get('employee_id')
+    if employee_id:
+        fiches = ficheDePaie.objects.filter(employee_id=employee_id).order_by('-year', '-month')
+    else:
+        fiches = ficheDePaie.objects.all().order_by('-uploaded_at')
+    
+    data = [
+        {
+            'id': fiche.id,
+            'employee_id': fiche.employee_id,
+            'month': fiche.month,
+            'year': fiche.year,
+            'amount': str(fiche.amount),
+            'pdf_url': fiche.pdf_file.url
+        }
+        for fiche in fiches
+    ]
+    return JsonResponse(data, safe=False)
