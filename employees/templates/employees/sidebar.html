@@ -10,19 +10,19 @@
 
   <!-- Navigation principale -->
   <nav class="sidebar-nav">
-    <a href="#" class="nav-item active">
+    <a href="{% url 'home_employee' %}" class="nav-item {% if request.resolver_match.url_name == 'home_employee' %}active{% endif %}">
       <img src="{% static 'employees/home.svg' %}" alt="" width="24" height="24">
       <span>Accueil</span>
     </a>
-    <a href="#" class="nav-item">
+    <a href="{% url 'absence' %}" class="nav-item {% if request.resolver_match.url_name == 'absence' %}active{% endif %}">
       <img src="{% static 'employees/abscences.svg' %}" alt="" width="24" height="24">
       <span>Mes absences</span>
     </a>
-    <a href="#" class="nav-item">
+    <a href="{% url 'fdp' %}" class="nav-item {% if request.resolver_match.url_name == 'fdp' %}active{% endif %}">
       <img src="{% static 'employees/liste.svg' %}" alt="" width="24" height="24">
       <span>Ma fiche de paie</span>
     </a>
-    <a href="#" class="nav-item">
+    <a href="{% url 'planning' %}" class="nav-item {% if request.resolver_match.url_name == 'planning' %}active{% endif %}">
       <img src="{% static 'employees/calendrier.svg' %}" alt="" width="24" height="24">
       <span>Mon planning</span>
     </a>

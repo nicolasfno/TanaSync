@@ -65,3 +65,12 @@ def download_pay_slip(request, fiche_id):
     response['Content-Disposition'] = f'attachment; filename="Fiche_Paie_{fiche.month}_{fiche.year}.pdf"'
     
     return response
+
+#switch de pages 
+def absence(request):
+    return render(request, "employees/absence.html")
+
+def planning(request):
+    return render(request, "employees/planning.html")
+def fdp(request):
+    return render(request, "employees/fdp.html")
