@@ -1,3 +1,4 @@
 *.sqlite3
 venv/
-²__pycache__/
+__pycache__/
+**/__pycache__/

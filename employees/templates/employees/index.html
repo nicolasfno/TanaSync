@@ -1,64 +1,214 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tanasync</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TanaSync — Accueil</title>
+  <link rel="stylesheet" href="{% static 'employees/css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'employees/css/home.css' %}">
 </head>
 <body>
-    <div>
-        {% include 'employees/sidebar.html' %}
-    </div>
-    <div>
-        <div>
-            <h1>Bonjour Jean</h1>
-            <p>Voici un aperçu de votre espace employé.</p>
-        </div>
-        <div>
-            <div>
-                <p>Nb jours de congé restants</p>
-                <h1>12 Jours</h1>
-            </div>
-            <div>
-                <p>Prochaine Paie</p>
-                <h1>28 Janvier</h1>
-            </div>
-            <div>
-                <p>Prochain evenement</p>
-                <h1>5 Fevrier</h1>
-            </div>
-        </div>
-        <div>
-            <h1>Actions Rapides</h1>
-            <div>
-                <a href="">demander un congé</a>
-                <a href="">Voir mon planning</a>
-            </div>
 
+  {% include 'employees/sidebar.html' %}
+
+  <!-- Zone principale -->
+  <main class="main">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-search-wrapper">
+        <img src="{% static 'employees/search.svg' %}" alt="" class="search-icon" width="16" height="16">
+        <input
+          type="text"
+          class="topbar-search"
+          placeholder="Rechercher..."
+          aria-label="Rechercher"
+        >
+      </div>
+
+      <div class="topbar-right">
+        <!-- Cloche notifications -->
+        <button class="topbar-icon-btn" aria-label="Notifications">
+          <img src="{% static 'employees/cloche.svg' %}" alt="" width="22" height="22">
+          <span class="nav-badge">2</span>
+        </button>
+
+        <!-- Profil utilisateur -->
+        <div class="topbar-user">
+          <div class="user-avatar">JD</div>
+          <div class="user-info">
+            <span class="user-name">Jean Dupont</span>
+            <span class="user-role">Développeur Full-Stack</span>
+          </div>
         </div>
-        <div>
-            <div>
-                <h1>Activités Recentes</h1>
-                <div>
-                    <img src="" alt="icone">
-                    <h2>Activité 1</h2>
-                </div>
-                <div>
-                    <img src="" alt="icone">
-                    <h2>Activité 1</h2>
-                </div>
-                <div>
-                    <img src="" alt="icone">
-                    <h2>Activité 1</h2>
-                </div>
+      </div>
+    </header>
+
+    <!-- Contenu principal -->
+    <div class="content">
+
+      <!-- Titre page -->
+      <div class="page-header">
+        <h1 class="page-title">Bonjour, Jean 👋</h1>
+        <p class="page-subtitle">Voici un aperçu de votre journée</p>
+      </div>
+
+      <!-- Stats cards -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-card-body">
+            <div class="stat-card-info">
+              <span class="stat-label">Jours de congés restants</span>
+              <span class="stat-value">12 jours</span>
             </div>
-            <div>
-                <h1>
-                    Calendrier
-                </h1>
-            </div>
+            <span class="stat-icon">🏖️</span>
+          </div>
         </div>
+        <div class="stat-card">
+          <div class="stat-card-body">
+            <div class="stat-card-info">
+              <span class="stat-label">Prochaine paie</span>
+              <span class="stat-value">28 Jan 2025</span>
+            </div>
+            <span class="stat-icon">💰</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-body">
+            <div class="stat-card-info">
+              <span class="stat-label">Messages non lus</span>
+              <span class="stat-value">3</span>
+            </div>
+            <span class="stat-icon">💬</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-body">
+            <div class="stat-card-info">
+              <span class="stat-label">Prochain événement</span>
+              <span class="stat-value">5 Fév</span>
+            </div>
+            <span class="stat-icon">📅</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions rapides -->
+      <div class="quick-actions">
+        <h2 class="section-title">Actions rapides</h2>
+        <div class="quick-actions-buttons">
+          <button class="btn btn-primary">📅 Nouvelle demande d'absence</button>
+          <button class="btn btn-outline">Voir mon planning</button>
+        </div>
+      </div>
+
+      <!-- Section bas : activités + calendrier -->
+      <div class="bottom-grid">
+
+        <!-- Activités récentes -->
+        <div class="card">
+          <h2 class="card-title">Activités récentes</h2>
+          <ul class="activity-list">
+            <li class="activity-item">
+              <div class="activity-icon activity-icon--green">✅</div>
+              <div class="activity-content">
+                <span class="activity-text">Votre demande de congé a été approuvée</span>
+                <span class="activity-time">Il y a 2 heures</span>
+              </div>
+            </li>
+            <li class="activity-item">
+              <div class="activity-icon activity-icon--rose">📄</div>
+              <div class="activity-content">
+                <span class="activity-text">Nouvelle fiche de paie disponible</span>
+                <span class="activity-time">Il y a 5 heures</span>
+              </div>
+            </li>
+            <li class="activity-item">
+              <div class="activity-icon activity-icon--blue">💬</div>
+              <div class="activity-content">
+                <span class="activity-text">Message de Sophie Martin</span>
+                <span class="activity-time">Hier à 14:30</span>
+              </div>
+            </li>
+            <li class="activity-item activity-item--last">
+              <div class="activity-icon activity-icon--yellow">📅</div>
+              <div class="activity-content">
+                <span class="activity-text">Rappel : Formation UX dans 3 jours</span>
+                <span class="activity-time">Hier à 08:00</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Calendrier -->
+        <div class="card">
+          <h2 class="card-title">Calendrier</h2>
+          <div class="calendar">
+            <!-- Header calendrier -->
+            <div class="calendar-header">
+              <button class="calendar-nav-btn" aria-label="Mois précédent">‹</button>
+              <span class="calendar-month">April 2026</span>
+              <button class="calendar-nav-btn" aria-label="Mois suivant">›</button>
+            </div>
+            <!-- Jours de la semaine -->
+            <div class="calendar-weekdays">
+              <span>Su</span>
+              <span>Mo</span>
+              <span>Tu</span>
+              <span>We</span>
+              <span>Th</span>
+              <span>Fr</span>
+              <span>Sa</span>
+            </div>
+            <!-- Grille des jours -->
+            <div class="calendar-days">
+              <!-- Jours mois précédent -->
+              <span class="day day--other">29</span>
+              <span class="day day--other">30</span>
+              <span class="day day--other">31</span>
+              <!-- Jours avril -->
+              <span class="day">1</span>
+              <span class="day">2</span>
+              <span class="day">3</span>
+              <span class="day">4</span>
+              <span class="day">5</span>
+              <span class="day">6</span>
+              <span class="day">7</span>
+              <span class="day">8</span>
+              <span class="day">9</span>
+              <span class="day">10</span>
+              <span class="day">11</span>
+              <span class="day">12</span>
+              <span class="day">13</span>
+              <span class="day">14</span>
+              <span class="day">15</span>
+              <span class="day day--today">16</span>
+              <span class="day">17</span>
+              <span class="day">18</span>
+              <span class="day">19</span>
+              <span class="day">20</span>
+              <span class="day">21</span>
+              <span class="day">22</span>
+              <span class="day">23</span>
+              <span class="day">24</span>
+              <span class="day">25</span>
+              <span class="day">26</span>
+              <span class="day">27</span>
+              <span class="day">28</span>
+              <span class="day">29</span>
+              <span class="day">30</span>
+              <!-- Jours mois suivant -->
+              <span class="day day--other">1</span>
+              <span class="day day--other">2</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
-    
+    <!-- /content -->
+  </main>
+
 </body>
 </html>
