@@ -2,18 +2,30 @@
 <html>
 <head>
     <title>Test Login</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'employees/login.css' %}">
 </head>
 <body>
-    <h2>Connexion</h2>
+   
     
     {% if form.errors %}
         <p style="color: red;">Identifiants incorrects. Réessayez.</p>
     {% endif %}
+    <div class="div" >
+       <img class="logo"src="{% static 'employees/svg-2026-04-16-13-24-18.svg' %}" alt="Logo">  
+       <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="bouton">Se connecter</button>
+        </form>
+          <!-- footer -->
+        <footer>
+            <p>© 2026 Tanasync. Tous droits réservés.</p>
+        </footer>
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Se connecter</button>
-    </form>
+    </div>
+
+    
+
 </body>
 </html>
