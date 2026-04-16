@@ -1,0 +1,183 @@
+/* =============================================
+   BASE.CSS — Layout global + Sidebar
+   TanaSync Design System
+   ============================================= */
+
+/* Reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Corps */
+body {
+  display: flex;
+  height: 100vh;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #F9FAFB;
+  color: #111827;
+  overflow: hidden;
+}
+
+/* ──────────────────────────────
+   SIDEBAR
+────────────────────────────── */
+.sidebar {
+  width: 260px;
+  min-height: 100vh;
+  background: #ffffff;
+  border-right: 1px solid #E5E7EB;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 16px;
+  flex-shrink: 0;
+}
+
+/* Logo */
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 8px;
+  margin-bottom: 4px;
+}
+
+.sidebar-logo-text {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.3px;
+}
+
+/* Séparateur */
+.sidebar-divider {
+  border: none;
+  border-top: 1px solid #E5E7EB;
+  margin: 16px 0;
+}
+
+/* Navigation */
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #374151;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.15s ease, color 0.15s ease;
+  position: relative;
+  border-left: 3px solid transparent;
+}
+
+.nav-item:hover {
+  background: #F3F4F6;
+  color: #111827;
+}
+
+.nav-item.active {
+  background: #FAE8EC;
+  color: #7D1E2E;
+  font-weight: 600;
+  border-left: 3px solid #7D1E2E;
+}
+
+.nav-item img {
+  flex-shrink: 0;
+}
+
+/* Badge (messagerie + cloche) */
+.nav-badge {
+  background: #7D1E2E;
+  color: #ffffff;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* ──────────────────────────────
+   SIDEBAR FOOTER
+────────────────────────────── */
+.sidebar-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 16px;
+  border-top: 1px solid #E5E7EB;
+  margin-top: auto;
+}
+
+.sidebar-footer-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #374151;
+  font-size: 14px;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  padding: 8px;
+  border-radius: 8px;
+  transition: background 0.15s ease;
+}
+
+.sidebar-footer-btn:hover {
+  background: #F3F4F6;
+}
+
+.sidebar-collapse-btn {
+  background: none;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  font-size: 18px;
+  color: #6B7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.sidebar-collapse-btn:hover {
+  background: #F3F4F6;
+  color: #111827;
+}
+
+/* ──────────────────────────────
+   LAYOUT PRINCIPAL
+────────────────────────────── */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 32px;
+}
