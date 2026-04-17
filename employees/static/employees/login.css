@@ -17,8 +17,9 @@ form{
     border: none; 
     border-radius: 5rem;
     background-color:#ac1e44;
-    width: 70%;
-    height: 50%;
+    width: 80%;
+    height: 70%;
+    color: #FDFDFC;
 }
 
 footer {
@@ -62,6 +63,7 @@ body {
 .logo {
     width: 50%;
     height: 50%;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
+
 
