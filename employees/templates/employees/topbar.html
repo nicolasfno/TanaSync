@@ -1,0 +1,25 @@
+{% load static %}
+    
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-search-wrapper">
+        <img src="{% static 'employees/search.svg' %}" alt="" class="search-icon" width="16" height="16">
+        <input
+          type="text"
+          class="topbar-search"
+          placeholder="Rechercher..."
+          aria-label="Rechercher"
+        >
+      </div>
+
+        <!-- Profil utilisateur -->
+        <div class="topbar-user">
+          <div class="user-avatar">JD</div>
+          <div class="user-info">
+            <span class="user-name">Jean Dupont</span>
+            <span class="user-role">Développeur Full-Stack</span>
+          </div>
+        </div>
+      </div>
+    </header>
+    
