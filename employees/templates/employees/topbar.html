@@ -1,0 +1,22 @@
+{% load static %}
+    
+<!-- Topbar -->
+    <header class="topbar">
+
+      <div class="topbar-right">
+
+        <!-- Profil utilisateur -->
+        <div class="topbar-user">
+          <div class="user-avatar">{{ user.first_name|slice:":1"|upper }}{{ user.last_name|slice:":1"|upper }}</div>
+          <div class="user-info">
+            <span class="user-name">{{ user.first_name }} {{ user.last_name }}</span>
+            <span class="user-role">{{ user.employee_profile.role }}</span>
+          </div>
+          <form method="post" action="{% url 'logout' %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-logout">Déconnexion</button>
+          </form>
+        </div>
+      </div>
+    </header>
+    

@@ -16,41 +16,9 @@
   flex-shrink: 0;
 }
 
-/* Champ de recherche */
-.topbar-search-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
 
-.search-icon {
-  position: absolute;
-  left: 12px;
-  pointer-events: none;
-  opacity: 0.5;
-}
 
-.topbar-search {
-  background: #F3F4F6;
-  border: 1px solid #E5E7EB;
-  border-radius: 20px;
-  padding: 8px 16px 8px 36px;
-  width: 400px;
-  font-size: 14px;
-  font-family: 'Segoe UI', Arial, sans-serif;
-  color: #111827;
-  outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
 
-.topbar-search::placeholder {
-  color: #9CA3AF;
-}
-
-.topbar-search:focus {
-  border-color: #7D1E2E;
-  box-shadow: 0 0 0 3px rgba(125, 30, 46, 0.08);
-}
 
 /* Partie droite topbar */
 .topbar-right {
@@ -60,40 +28,13 @@
   margin-left: auto;
 }
 
-/* Bouton cloche */
-.topbar-icon-btn {
-  position: relative;
-  background: none;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 6px;
-  border-radius: 8px;
-  transition: background 0.15s ease;
-}
-
-.topbar-icon-btn:hover {
-  background: #F3F4F6;
-}
-
-.topbar-icon-btn .nav-badge {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 16px;
-  height: 16px;
-  font-size: 9px;
-  margin-left: 0;
-}
-
 /* Profil utilisateur */
 .topbar-user {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 80px;
   cursor: pointer;
+
 }
 
 .user-avatar {
