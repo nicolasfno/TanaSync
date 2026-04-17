@@ -23,7 +23,7 @@
 
       <!-- Titre page -->
       <div class="page-header">
-        <h1 class="page-title">Bonjour, Jean 👋</h1>
+        <h1 class="page-title">Bonjour, {{ user.first_name }} 👋</h1>
         <p class="page-subtitle">Voici un aperçu de votre journée</p>
       </div>
 
@@ -47,15 +47,7 @@
             <span class="stat-icon">💰</span>
           </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-card-body">
-            <div class="stat-card-info">
-              <span class="stat-label">Messages non lus</span>
-              <span class="stat-value">3</span>
-            </div>
-            <span class="stat-icon">💬</span>
-          </div>
-        </div>
+        
         <div class="stat-card">
           <div class="stat-card-body">
             <div class="stat-card-info">
@@ -71,8 +63,8 @@
       <div class="quick-actions">
         <h2 class="section-title">Actions rapides</h2>
         <div class="quick-actions-buttons">
-          <button class="btn btn-primary">📅 Nouvelle demande d'absence</button>
-          <button class="btn btn-outline">Voir mon planning</button>
+          <a class="btn btn-primary" href="{% url 'absence' %}">📅 Nouvelle demande d'absence</a>
+          <a class="btn btn-outline" href="{% url 'planning' %}">Voir mon planning</a>
         </div>
       </div>
 
