@@ -5,6 +5,9 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, Http404
+import calendar 
+from datetime import datetime
+
 # Create your views here.
 @login_required
 def home_employee(request):
@@ -75,3 +78,19 @@ def planning(request):
     return render(request, "employees/planning.html")
 def fdp(request):
     return render(request, "employees/fdp.html")
+
+def calendar_view(request):
+    today = datetime.now()
+    curr_year = datetime.now()
+    curr_month = 4
+
+    cal = calendar.Calendar(firtsweekday=6)
+    monts_days = cal.monthdayscalendar(curr_year, curr_month)
+
+    context = {
+        'monts_days': monts_days,
+        'current_day': 16,
+        'month_name': "Avril 2026", 
+    }
+    
+    return render(request, 'calendar.html', context)
