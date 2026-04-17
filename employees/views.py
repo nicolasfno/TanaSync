@@ -6,12 +6,13 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, Http404
 # Create your views here.
+@login_required
 def home_employee(request):
     return render(request, "employees/index.html")
 
 def liste_conges(request):
     if request.method == 'GET':
-        conges = Conge.objects.filter(employee_id=request.user.id)
+        conges = Conge.objects.filter(employee_profile__user=request.user)
         data = [
             {
                 'id': conge.id,
@@ -29,7 +30,7 @@ def demander_conge(request):
     if request.method == "POST":
         data = json.loads(request.body)
         conge = Conge.objects.create(
-            employee_id=data["employee_id"],
+            employee_profile_id=data["employee_profile_id"],
             start_date=data["start_date"],
             end_date=data["end_date"],
             reason=data.get("reason", "")
@@ -48,7 +49,7 @@ def annuler_conge(request, id):
 
 @login_required
 def my_pay_slips(request):
-    fiches = ficheDePaie.objects.filter(employee__user=request.user).order_by('-year', '-month')
+    fiches = ficheDePaie.objects.filter(employee_profile__user=request.user).order_by('-year', '-month')
     
     return render(request, 'employees/my_fiches.html', {'fiches': fiches})
 
@@ -56,7 +57,7 @@ def my_pay_slips(request):
 def download_pay_slip(request, fiche_id):
     try:
         # On récupère la fiche ET on vérifie qu'elle appartient bien au user
-        fiche = ficheDePaie.objects.get(id=fiche_id, employee__user=request.user)
+        fiche = ficheDePaie.objects.get(id=fiche_id, employee_profile__user=request.user)
     except ficheDePaie.DoesNotExist:
         raise Http404("Fiche introuvable ou accès refusé")
 
