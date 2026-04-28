@@ -1,0 +1,241 @@
+{% load static %}
+{# Template partagé — inclus par employees/absence.html ET rh/absences_rh.html #}
+{# Reçoit du contexte : tab, conges, types_absence, jours_pris/restants/en_attente, quota_annuel, cancel_url_name #}
+
+<style>
+  .absences-container { padding: 30px; background: #f8f9fa; min-height: 100vh; }
+
+  .page-header { margin-bottom: 28px; }
+  .page-header h1 { font-size: 2rem; font-weight: 700; color: #1a1a1a; margin: 0 0 4px; }
+  .page-header p  { font-size: 0.95rem; color: #7f8c8d; margin: 0; }
+
+  /* Tabs */
+  .tabs { display: flex; border-bottom: 2px solid #e9ecef; margin-bottom: 28px; gap: 0; }
+  .tab-link {
+    padding: 12px 22px; font-size: 0.95rem; font-weight: 500;
+    color: #7f8c8d; text-decoration: none;
+    border-bottom: 2px solid transparent; margin-bottom: -2px;
+    transition: all 0.2s;
+  }
+  .tab-link:hover { color: #2c3e50; }
+  .tab-link.active { color: #8B1A2E; border-bottom-color: #8B1A2E; font-weight: 600; }
+
+  /* Card container */
+  .card {
+    background: white; border-radius: 12px; padding: 28px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  }
+  .card-title { font-size: 1rem; font-weight: 600; color: #1a1a1a; margin: 0 0 4px; }
+  .card-subtitle { font-size: 0.88rem; color: #95a5a6; margin: 0 0 24px; }
+
+  /* Form */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group.full { grid-column: 1 / -1; }
+  .form-label { font-size: 0.9rem; font-weight: 600; color: #2c3e50; }
+  .form-control {
+    padding: 12px 14px; border: 1.5px solid #e0e0e0; border-radius: 8px;
+    font-size: 0.9rem; color: #2c3e50; background: #f8f9fa;
+    transition: border-color 0.2s; outline: none; width: 100%; box-sizing: border-box;
+  }
+  .form-control:focus { border-color: #8B1A2E; background: white; }
+  textarea.form-control { resize: vertical; min-height: 100px; }
+
+  .btn-submit {
+    width: 100%; padding: 14px; background: #8B1A2E; color: white;
+    border: none; border-radius: 8px; font-size: 1rem; font-weight: 600;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    gap: 10px; transition: background 0.2s; margin-top: 8px;
+  }
+  .btn-submit:hover { background: #6e1524; }
+
+  /* Demandes list */
+  .demandes-list { display: flex; flex-direction: column; gap: 14px; }
+  .demande-row {
+    display: flex; align-items: center; gap: 16px;
+    padding: 16px 20px; border: 1.5px solid #f0f0f0; border-radius: 10px;
+    background: white; transition: border-color 0.2s;
+  }
+  .demande-row:hover { border-color: #ddd; }
+  .demande-type {
+    background: #f8f9fa; border-radius: 6px; padding: 6px 12px;
+    font-size: 0.82rem; font-weight: 600; color: #555; white-space: nowrap;
+  }
+  .demande-dates { flex: 1; font-size: 0.9rem; color: #2c3e50; }
+  .demande-dates .days { font-size: 0.8rem; color: #95a5a6; margin-top: 2px; }
+  .status-pill {
+    border-radius: 999px; padding: 4px 14px; font-size: 0.8rem; font-weight: 600; white-space: nowrap;
+  }
+  .status-pill.pending  { background: #fff8e1; color: #f39c12; }
+  .status-pill.accepte  { background: #eafaf1; color: #27ae60; }
+  .status-pill.refuse   { background: #fdf2f2; color: #e74c3c; }
+
+  .btn-cancel {
+    background: none; border: 1.5px solid #e74c3c; color: #e74c3c;
+    border-radius: 6px; padding: 5px 12px; font-size: 0.8rem; font-weight: 600;
+    cursor: pointer; transition: all 0.2s; white-space: nowrap;
+  }
+  .btn-cancel:hover { background: #fdf2f2; }
+
+  /* Solde */
+  .solde-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 24px; }
+  .solde-card {
+    border-radius: 10px; padding: 20px 24px; text-align: center;
+  }
+  .solde-card.restants { background: #eafaf1; }
+  .solde-card.pris     { background: #fef9e7; }
+  .solde-card.attente  { background: #ebf5fb; }
+  .solde-number { font-size: 2.5rem; font-weight: 700; margin: 0 0 4px; }
+  .solde-card.restants .solde-number { color: #27ae60; }
+  .solde-card.pris     .solde-number { color: #e67e22; }
+  .solde-card.attente  .solde-number { color: #2980b9; }
+  .solde-label { font-size: 0.85rem; font-weight: 500; color: #555; }
+  .solde-progress-wrap { margin-top: 20px; }
+  .solde-progress-label {
+    display: flex; justify-content: space-between;
+    font-size: 0.85rem; color: #555; margin-bottom: 8px;
+  }
+  .progress-bar-bg { background: #e9ecef; border-radius: 999px; height: 10px; overflow: hidden; }
+  .progress-bar-fill { background: #8B1A2E; height: 10px; border-radius: 999px; transition: width 0.4s; }
+
+  .empty-state { text-align: center; padding: 48px 20px; color: #95a5a6; }
+  .empty-icon { font-size: 2.5rem; margin-bottom: 12px; }
+
+  @media (max-width: 768px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .solde-grid { grid-template-columns: 1fr; }
+    .demande-row { flex-wrap: wrap; }
+  }
+</style>
+
+<div class="absences-container">
+
+  <!-- Header -->
+  <div class="page-header">
+    <h1>Demandes d'absences</h1>
+    <p>Gérez vos demandes et consultez vos soldes</p>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <a href="?tab=nouvelle"     class="tab-link {% if tab == 'nouvelle' %}active{% endif %}">Nouvelle demande</a>
+    <a href="?tab=mes_demandes" class="tab-link {% if tab == 'mes_demandes' %}active{% endif %}">Mes demandes</a>
+    <a href="?tab=solde"        class="tab-link {% if tab == 'solde' %}active{% endif %}">Mon solde</a>
+  </div>
+
+  <!-- ===== TAB : NOUVELLE DEMANDE ===== -->
+  {% if tab == 'nouvelle' %}
+  <div class="card">
+    <p class="card-title">Nouvelle demande d'absence</p>
+    <p class="card-subtitle">Remplissez le formulaire ci-dessous pour soumettre votre demande</p>
+
+    <form method="POST" action=".">
+      {% csrf_token %}
+      <input type="hidden" name="tab" value="nouvelle">
+
+      <div class="form-group full">
+        <label class="form-label">Type d'absence</label>
+        <select name="type_absence" class="form-control" required>
+          <option value="" disabled selected>Sélectionnez un type</option>
+          {% for value, label in types_absence %}
+          <option value="{{ value }}">{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Date de début</label>
+          <input type="date" name="start_date" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Date de fin</label>
+          <input type="date" name="end_date" class="form-control" required>
+        </div>
+      </div>
+
+      <div class="form-group full">
+        <label class="form-label">Commentaire</label>
+        <textarea name="commentaire" class="form-control"
+                  placeholder="Ajoutez des détails sur votre demande..."></textarea>
+      </div>
+
+      <button type="submit" class="btn-submit">
+        &#9992; Soumettre ma demande
+      </button>
+    </form>
+  </div>
+
+  <!-- ===== TAB : MES DEMANDES ===== -->
+  {% elif tab == 'mes_demandes' %}
+  <div class="card">
+    <p class="card-title">Mes demandes</p>
+    <p class="card-subtitle">Historique de toutes vos demandes d'absence</p>
+
+    {% if conges %}
+    <div class="demandes-list">
+      {% for conge in conges %}
+      <div class="demande-row">
+        <span class="demande-type">{{ conge.type_label }}</span>
+        <div class="demande-dates">
+          <div>{{ conge.start_date }} → {{ conge.end_date }}</div>
+          <div class="days">{{ conge.days }} jour{{ conge.days|pluralize }}{% if conge.created_at %} · Soumis le {{ conge.created_at }}{% endif %}</div>
+        </div>
+        {% if conge.status == 'Pending' %}
+          <span class="status-pill pending">⏳ En attente</span>
+          <form method="POST" action="{% url cancel_url_name conge.id %}" style="margin:0;">
+            {% csrf_token %}
+            <button type="submit" class="btn-cancel"
+                    onclick="return confirm('Annuler cette demande ?')">Annuler</button>
+          </form>
+        {% elif conge.status == 'Accepté' %}
+          <span class="status-pill accepte">✓ Accepté</span>
+        {% elif conge.status == 'Refusé' %}
+          <span class="status-pill refuse">✗ Refusé</span>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">📋</div>
+      <p>Aucune demande pour le moment.</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- ===== TAB : MON SOLDE ===== -->
+  {% elif tab == 'solde' %}
+  <div class="card">
+    <p class="card-title">Mon solde de congés — {{ quota_annuel }} jours / an</p>
+    <p class="card-subtitle">Récapitulatif pour l'année en cours</p>
+
+    <div class="solde-grid">
+      <div class="solde-card restants">
+        <div class="solde-number">{{ jours_restants }}</div>
+        <div class="solde-label">Jours restants</div>
+      </div>
+      <div class="solde-card pris">
+        <div class="solde-number">{{ jours_pris }}</div>
+        <div class="solde-label">Jours pris</div>
+      </div>
+      <div class="solde-card attente">
+        <div class="solde-number">{{ jours_en_attente }}</div>
+        <div class="solde-label">En attente</div>
+      </div>
+    </div>
+
+    <div class="solde-progress-wrap">
+      <div class="solde-progress-label">
+        <span>Congés utilisés</span>
+        <span>{{ jours_pris }} / {{ quota_annuel }} jours</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill"
+             style="width: {% widthratio jours_pris quota_annuel 100 %}%;"></div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+</div>

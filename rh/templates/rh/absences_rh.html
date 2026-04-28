@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Absences - RH</title>
+  <title>Mes absences - RH</title>
   <link rel="stylesheet" href="{% static 'rh/css/base.css' %}">
   <link rel="stylesheet" href="{% static 'rh/css/home.css' %}">
 </head>
@@ -13,10 +13,7 @@
   <main class="main">
     {% include 'rh/topbar.html' %}
     <div class="content">
-      <div class="page-header">
-        <h1 class="page-title">Absences</h1>
-        <p class="page-subtitle">Page RH vide pour le moment.</p>
-      </div>
+      {% include 'shared/absences_content.html' %}
     </div>
   </main>
 </body>

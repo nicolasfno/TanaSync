@@ -8,6 +8,7 @@ urlpatterns = [
     path('planning-global/', views.planning_global, name='planning_global'),
     path('planning-global/export/', views.export_planning_csv, name='export_planning_csv'),
     path('absences/', views.absences_rh, name='absences_rh'),
+    path('absences/annuler/<int:id>/', views.rh_annuler_conge, name='rh_annuler_conge'),
     path('fiches-paie/', views.fiches_de_paie_rh, name='fiches_de_paie_rh'),
     path('planning/', views.planning_rh, name='planning_rh'),
     path('conges/', views.liste_conges, name='liste_conges'),

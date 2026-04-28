@@ -16,7 +16,7 @@
       <img src="{% static 'employees/home.svg' %}" alt="" width="24" height="24">
       <span>Accueil</span>
     </a>
-    <a href="{% url 'absence' %}" class="nav-item {% if request.resolver_match.url_name == 'absence' %}active{% endif %}">
+    <a href="{% url 'mes_absences' %}" class="nav-item {% if request.resolver_match.url_name == 'mes_absences' %}active{% endif %}">
       <img src="{% static 'employees/abscences.svg' %}" alt="" width="24" height="24">
       <span>Mes absences</span>
     </a>

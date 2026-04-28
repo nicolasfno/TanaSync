@@ -147,6 +147,16 @@ AVATAR_COLORS = [
     '#FFD95A', '#FF6B9D', '#95E1D3', '#F38181'
 ]
 
+QUOTA_ANNUEL = 25
+
+TYPES_ABSENCE = [
+    ('Congé payé', 'Congé payé'),
+    ('RTT', 'RTT'),
+    ('Formation', 'Formation'),
+    ('Maladie', 'Maladie'),
+    ('Repos', 'Repos'),
+]
+
 
 def _get_conge_type_label(reason):
     """Détermine le label du type de congé à partir du motif."""
@@ -163,6 +173,54 @@ def _get_conge_type_label(reason):
 def _format_date_fr(date):
     """Formate une date en français: '15 Mai 2025'."""
     return f"{date.day} {MONTH_NAMES_FR[date.month]} {date.year}"
+
+
+def _build_absences_context(profile, tab):
+    """
+    Construit le contexte partagé pour la page de demande d'absence.
+    Utilisé par employees.views.mes_absences ET rh.views.absences_rh
+    pour éviter toute duplication de logique.
+    """
+    from datetime import date as dt_date
+    today = dt_date.today()
+
+    conges_qs = Conge.objects.filter(
+        employee_profile=profile
+    ).order_by('-created_at', '-start_date')
+
+    # Calcul du solde annuel
+    jours_pris = sum(
+        (c.end_date - c.start_date).days + 1
+        for c in conges_qs.filter(status='Accepté', start_date__year=today.year)
+    )
+    jours_en_attente = sum(
+        (c.end_date - c.start_date).days + 1
+        for c in conges_qs.filter(status='Pending')
+    )
+
+    conges_data = []
+    for conge in conges_qs:
+        days = (conge.end_date - conge.start_date).days + 1
+        conges_data.append({
+            'id': conge.id,
+            'type_label': _get_conge_type_label(conge.reason),
+            'start_date': _format_date_fr(conge.start_date),
+            'end_date': _format_date_fr(conge.end_date),
+            'days': days,
+            'reason': conge.reason,
+            'status': conge.status,
+            'created_at': _format_date_fr(conge.created_at.date()) if conge.created_at else '',
+        })
+
+    return {
+        'tab': tab,
+        'conges': conges_data,
+        'types_absence': TYPES_ABSENCE,
+        'jours_pris': jours_pris,
+        'jours_restants': max(0, QUOTA_ANNUEL - jours_pris),
+        'jours_en_attente': jours_en_attente,
+        'quota_annuel': QUOTA_ANNUEL,
+    }
 
 
 @login_required
@@ -234,7 +292,45 @@ def traiter_conge(request, id):
 @login_required
 @user_passes_test(is_hr)
 def absences_rh(request):
-    return render(request, "rh/absences_rh.html")
+    try:
+        profile = request.user.employee_profile
+    except Exception:
+        # Superuser sans profil employé : créer un profil RH à la volée
+        from employees.models import EmployeeProfile
+        profile, _ = EmployeeProfile.objects.get_or_create(
+            user=request.user, defaults={'role': 'RH'}
+        )
+    tab = request.GET.get('tab', 'nouvelle')
+
+    if request.method == 'POST':
+        type_absence = request.POST.get('type_absence', '')
+        commentaire = request.POST.get('commentaire', '').strip()
+        start_date = request.POST.get('start_date')
+        end_date = request.POST.get('end_date')
+        reason = f"{type_absence} - {commentaire}" if commentaire else type_absence
+        Conge.objects.create(
+            employee_profile=profile,
+            start_date=start_date,
+            end_date=end_date,
+            reason=reason
+        )
+        return redirect(reverse('absences_rh') + '?tab=mes_demandes')
+
+    context = _build_absences_context(profile, tab)
+    context['cancel_url_name'] = 'rh_annuler_conge'
+    return render(request, "rh/absences_rh.html", context)
+
+
+@login_required
+@user_passes_test(is_hr)
+def rh_annuler_conge(request, id):
+    if request.method == 'POST':
+        try:
+            conge = Conge.objects.get(id=id, employee_profile__user=request.user)
+            conge.delete()
+        except Conge.DoesNotExist:
+            pass
+    return redirect(reverse('absences_rh') + '?tab=mes_demandes')
 
 @login_required
 @user_passes_test(is_hr)

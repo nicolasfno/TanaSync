@@ -1,16 +1,19 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Absence</title>
-    <link rel="stylesheet" href="{% static 'employees/css/base.css' %}">
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mes absences</title>
+  <link rel="stylesheet" href="{% static 'employees/css/base.css' %}">
 </head>
 <body>
-    {% include 'employees/sidebar.html' %}
-    <main class="main">
-        {% include 'employees/topbar.html' %}
-    </main>
+  {% include 'employees/sidebar.html' %}
+  <main class="main">
+    {% include 'employees/topbar.html' %}
+    <div class="content">
+      {% include 'shared/absences_content.html' %}
+    </div>
+  </main>
+</body>
 </html>
