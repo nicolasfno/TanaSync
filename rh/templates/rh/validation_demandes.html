@@ -7,15 +7,193 @@
   <title>Validation des demandes - RH</title>
   <link rel="stylesheet" href="{% static 'rh/css/base.css' %}">
   <link rel="stylesheet" href="{% static 'rh/css/home.css' %}">
+  <style>
+    .validation-container { padding: 30px; background: #f8f9fa; min-height: 100vh; }
+
+    /* Header */
+    .page-header { margin-bottom: 28px; }
+    .page-header h1 { font-size: 2rem; font-weight: 700; color: #1a1a1a; margin: 0 0 6px; }
+    .pending-notice {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: #e67e22; font-size: 0.95rem; font-weight: 500;
+    }
+    .pending-notice .notice-icon { font-size: 1.1rem; }
+    .pending-notice strong { color: #e67e22; }
+
+    /* Tabs */
+    .tabs {
+      display: flex; gap: 0; border-bottom: 2px solid #e9ecef;
+      margin-bottom: 28px;
+    }
+    .tab-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 20px; background: none; border: none;
+      font-size: 0.95rem; font-weight: 500; color: #7f8c8d;
+      cursor: pointer; text-decoration: none;
+      border-bottom: 2px solid transparent; margin-bottom: -2px;
+      transition: all 0.2s ease;
+    }
+    .tab-btn:hover { color: #2c3e50; }
+    .tab-btn.active { color: #c0392b; border-bottom-color: #c0392b; font-weight: 600; }
+    .tab-badge {
+      background: #e67e22; color: white; font-size: 0.75rem;
+      font-weight: 700; border-radius: 999px; padding: 2px 8px;
+      min-width: 22px; text-align: center;
+    }
+
+    /* Cards */
+    .cards-list { display: flex; flex-direction: column; gap: 16px; }
+    .conge-card {
+      background: white; border-radius: 12px; padding: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      display: flex; align-items: flex-start; gap: 20px;
+    }
+    .card-avatar {
+      width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.9rem; color: white;
+    }
+    .card-body { flex: 1; min-width: 0; }
+    .card-name-row {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 8px; flex-wrap: wrap;
+    }
+    .card-name { font-size: 1.05rem; font-weight: 700; color: #1a1a1a; }
+    .type-badge {
+      border: 1.5px solid #bdc3c7; border-radius: 999px;
+      padding: 2px 12px; font-size: 0.8rem; color: #555; font-weight: 500;
+    }
+    .card-dates {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.9rem; color: #2c3e50; font-weight: 500;
+      margin-bottom: 10px;
+    }
+    .card-dates .days-count { color: #e67e22; font-weight: 700; }
+    .card-reason {
+      background: #f8f9fa; border-radius: 8px; padding: 12px 16px;
+      font-size: 0.88rem; color: #555; margin-bottom: 10px;
+    }
+    .card-reason span { font-weight: 600; color: #333; }
+    .card-submitted { font-size: 0.82rem; color: #95a5a6; }
+
+    /* Status badge (historique) */
+    .status-badge {
+      display: inline-block; border-radius: 999px; padding: 3px 12px;
+      font-size: 0.8rem; font-weight: 600;
+    }
+    .status-badge.accepte { background: #eafaf1; color: #27ae60; }
+    .status-badge.refuse  { background: #fdf2f2; color: #e74c3c; }
+
+    /* Actions */
+    .card-actions { display: flex; flex-direction: column; gap: 10px; flex-shrink: 0; }
+    .btn-approve, .btn-refuse {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 10px 20px; border-radius: 8px; font-size: 0.9rem;
+      font-weight: 600; cursor: pointer; border: none; transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .btn-approve { background: #27ae60; color: white; }
+    .btn-approve:hover { background: #219a52; }
+    .btn-refuse  { background: white; color: #e74c3c; border: 2px solid #e74c3c; }
+    .btn-refuse:hover  { background: #fdf2f2; }
+
+    .empty-state {
+      text-align: center; padding: 60px 20px; color: #95a5a6; font-size: 1rem;
+    }
+  </style>
 </head>
 <body>
   {% include 'rh/sidebar.html' %}
   <main class="main">
     {% include 'rh/topbar.html' %}
     <div class="content">
-      <div class="page-header">
-        <h1 class="page-title">Validation des demandes</h1>
-        <p class="page-subtitle">Page RH vide pour le moment.</p>
+      <div class="validation-container">
+
+        <!-- Header -->
+        <div class="page-header">
+          <h1>Validation des absences</h1>
+          <p class="pending-notice">
+            <span class="notice-icon">⚠️</span>
+            <strong>{{ pending_count }} demandes</strong> en attente de validation
+          </p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+          <a href="?tab=a_valider" class="tab-btn {% if tab == 'a_valider' %}active{% endif %}">
+            À valider
+            {% if pending_count > 0 %}
+            <span class="tab-badge">{{ pending_count }}</span>
+            {% endif %}
+          </a>
+          <a href="?tab=toutes" class="tab-btn {% if tab == 'toutes' %}active{% endif %}">
+            Toutes les demandes
+          </a>
+          <a href="?tab=historique" class="tab-btn {% if tab == 'historique' %}active{% endif %}">
+            Historique
+          </a>
+        </div>
+
+        <!-- Cards -->
+        <div class="cards-list">
+          {% for conge in conges %}
+          <div class="conge-card">
+
+            <!-- Avatar -->
+            <div class="card-avatar" style="background-color: {{ conge.avatar_color }};">
+              {{ conge.avatar_initials }}
+            </div>
+
+            <!-- Body -->
+            <div class="card-body">
+              <div class="card-name-row">
+                <span class="card-name">{{ conge.employee_name }}</span>
+                <span class="type-badge">{{ conge.type_label }}</span>
+                {% if tab != 'a_valider' %}
+                  {% if conge.status == 'Accepté' %}
+                  <span class="status-badge accepte">✓ Accepté</span>
+                  {% elif conge.status == 'Refusé' %}
+                  <span class="status-badge refuse">✗ Refusé</span>
+                  {% endif %}
+                {% endif %}
+              </div>
+              <div class="card-dates">
+                📅 {{ conge.start_date }} → {{ conge.end_date }}
+                <span class="days-count">({{ conge.days }} jour{{ conge.days|pluralize }})</span>
+              </div>
+              <div class="card-reason">
+                <span>Commentaire:</span> {{ conge.reason }}
+              </div>
+              {% if conge.created_at %}
+              <p class="card-submitted">Soumis le {{ conge.created_at }}</p>
+              {% endif %}
+            </div>
+
+            <!-- Actions -->
+            {% if conge.status == 'Pending' %}
+            <div class="card-actions">
+              <form method="POST" action="{% url 'traiter_conge' conge.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="tab" value="{{ tab }}">
+                <button type="submit" name="action" value="approuver" class="btn-approve">
+                  ✓ Approuver
+                </button>
+              </form>
+              <form method="POST" action="{% url 'traiter_conge' conge.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="tab" value="{{ tab }}">
+                <button type="submit" name="action" value="refuser" class="btn-refuse">
+                  ✗ Refuser
+                </button>
+              </form>
+            </div>
+            {% endif %}
+
+          </div>
+          {% empty %}
+          <div class="empty-state">Aucune demande à afficher.</div>
+          {% endfor %}
+        </div>
+
       </div>
     </div>
   </main>

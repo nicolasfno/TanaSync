@@ -145,6 +145,11 @@
     transition: all 0.3s ease;
 }
 
+select.filter-btn {
+    appearance: auto;
+    min-width: 180px;
+}
+
 .filter-btn:hover {
     border-color: #3498db;
     background: #ecf0f1;

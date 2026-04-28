@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.urls import reverse
 from rh.models import Conge, ficheDePaie
 from employees.models import EmployeeProfile
 from django.http import JsonResponse, HttpResponse
@@ -135,10 +136,100 @@ def home_rh(request):
 def vue_equipe(request):
     return render(request, "rh/vue_equipe.html")
 
+MONTH_NAMES_FR = {
+    1: 'Janvier', 2: 'Février', 3: 'Mars', 4: 'Avril',
+    5: 'Mai', 6: 'Juin', 7: 'Juillet', 8: 'Août',
+    9: 'Septembre', 10: 'Octobre', 11: 'Novembre', 12: 'Décembre'
+}
+
+AVATAR_COLORS = [
+    '#FFB6C1', '#DEB887', '#4ECDC4', '#C3A6FF',
+    '#FFD95A', '#FF6B9D', '#95E1D3', '#F38181'
+]
+
+
+def _get_conge_type_label(reason):
+    """Détermine le label du type de congé à partir du motif."""
+    r = reason.lower()
+    if 'formation' in r:
+        return 'Formation'
+    if 'maladie' in r or 'arrêt' in r:
+        return 'Maladie'
+    if 'rtt' in r or 'repos' in r or 'télétravail' in r or 'pont' in r:
+        return 'RTT'
+    return 'Congé payé'
+
+
+def _format_date_fr(date):
+    """Formate une date en français: '15 Mai 2025'."""
+    return f"{date.day} {MONTH_NAMES_FR[date.month]} {date.year}"
+
+
 @login_required
 @user_passes_test(is_hr)
 def validation_demandes(request):
-    return render(request, "rh/validation_demandes.html")
+    tab = request.GET.get('tab', 'a_valider')
+
+    if tab == 'historique':
+        conges_qs = Conge.objects.filter(
+            status__in=['Accepté', 'Refusé']
+        ).select_related('employee_profile__user').order_by('-created_at')
+    elif tab == 'toutes':
+        conges_qs = Conge.objects.all().select_related(
+            'employee_profile__user'
+        ).order_by('-created_at')
+    else:
+        conges_qs = Conge.objects.filter(
+            status='Pending'
+        ).select_related('employee_profile__user').order_by('-created_at')
+
+    pending_count = Conge.objects.filter(status='Pending').count()
+
+    conges_data = []
+    for idx, conge in enumerate(conges_qs):
+        user = conge.employee_profile.user
+        first_initial = user.first_name[0] if user.first_name else ''
+        last_initial = user.last_name[0] if user.last_name else ''
+        days = (conge.end_date - conge.start_date).days + 1
+
+        conges_data.append({
+            'id': conge.id,
+            'employee_name': user.get_full_name() or user.username,
+            'avatar_initials': (first_initial + last_initial).upper(),
+            'avatar_color': AVATAR_COLORS[idx % len(AVATAR_COLORS)],
+            'type_label': _get_conge_type_label(conge.reason),
+            'start_date': _format_date_fr(conge.start_date),
+            'end_date': _format_date_fr(conge.end_date),
+            'days': days,
+            'reason': conge.reason,
+            'status': conge.status,
+            'created_at': _format_date_fr(conge.created_at.date()) if conge.created_at else '',
+        })
+
+    return render(request, "rh/validation_demandes.html", {
+        'conges': conges_data,
+        'pending_count': pending_count,
+        'tab': tab,
+    })
+
+
+@login_required
+@user_passes_test(is_hr)
+def traiter_conge(request, id):
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        tab = request.POST.get('tab', 'a_valider')
+        try:
+            conge = Conge.objects.get(id=id)
+            if action == 'approuver':
+                conge.status = 'Accepté'
+            elif action == 'refuser':
+                conge.status = 'Refusé'
+            conge.save()
+        except Conge.DoesNotExist:
+            pass
+        return redirect(reverse('validation_demandes') + f'?tab={tab}')
+    return redirect('validation_demandes')
 
 @login_required
 @user_passes_test(is_hr)
@@ -158,9 +249,29 @@ def planning_rh(request):
 
 # ==================== PLANNING GLOBAL ====================
 
-def _get_planning_data(year, month):
+def _get_absence_type(reason):
+    """Détermine le type d'absence à partir du motif."""
+    r = reason.lower()
+    if 'formation' in r:
+        return 'formation'
+    if 'maladie' in r or 'arrêt' in r:
+        return 'maladie'
+    if 'repos' in r or 'télétravail' in r:
+        return 'repos'
+    return 'congé'
+
+
+def _get_planning_data(year, month, team='all', absence_type='all'):
     """Construit les données du planning pour un mois donné."""
-    employees = EmployeeProfile.objects.filter(role='Employe').select_related('user')
+
+    # Filtrer les employés selon l'équipe sélectionnée
+    if team == 'rh':
+        employees = EmployeeProfile.objects.filter(role='RH').select_related('user')
+    elif team == 'employes':
+        employees = EmployeeProfile.objects.filter(role='Employe').select_related('user')
+    else:
+        employees = EmployeeProfile.objects.all().select_related('user')
+
     days_in_month = calendar.monthrange(year, month)[1]
     today = datetime.now().date()
 
@@ -168,6 +279,13 @@ def _get_planning_data(year, month):
         1: 'Janvier', 2: 'Février', 3: 'Mars', 4: 'Avril',
         5: 'Mai', 6: 'Juin', 7: 'Juillet', 8: 'Août',
         9: 'Septembre', 10: 'Octobre', 11: 'Novembre', 12: 'Décembre'
+    }
+
+    type_labels = {
+        'congé': 'Congé',
+        'formation': 'Formation',
+        'maladie': 'Maladie',
+        'repos': 'Repos',
     }
 
     avatar_colors = [
@@ -196,13 +314,19 @@ def _get_planning_data(year, month):
         )
 
         for conge in conges:
+            abs_type = _get_absence_type(conge.reason)
+
+            # Appliquer le filtre par type d'absence
+            if absence_type != 'all' and abs_type != absence_type:
+                continue
+
             current_date = conge.start_date
             while current_date <= conge.end_date:
                 if current_date.month == month and current_date.year == year:
                     absences.append({
                         'date': str(current_date),
-                        'type': 'congé',
-                        'label': 'Congé'
+                        'type': abs_type,
+                        'label': type_labels.get(abs_type, abs_type.capitalize())
                     })
                 current_date += timedelta(days=1)
 
@@ -253,18 +377,22 @@ def planning_global(request):
     today = datetime.now()
     month = int(request.GET.get('month', today.month))
     year = int(request.GET.get('year', today.year))
+    team = request.GET.get('team', 'all')
+    absence_type = request.GET.get('type', 'all')
 
     prev_month = month - 1 if month > 1 else 12
     prev_year = year if month > 1 else year - 1
     next_month = month + 1 if month < 12 else 1
     next_year = year if month < 12 else year + 1
 
-    data = _get_planning_data(year, month)
+    data = _get_planning_data(year, month, team=team, absence_type=absence_type)
     data.update({
         'prev_month': prev_month,
         'prev_year': prev_year,
         'next_month': next_month,
         'next_year': next_year,
+        'selected_team': team,
+        'selected_type': absence_type,
     })
 
     return render(request, "rh/planning_global.html", data)
@@ -275,8 +403,10 @@ def planning_global(request):
 def export_planning_csv(request):
     month = int(request.GET.get('month', datetime.now().month))
     year = int(request.GET.get('year', datetime.now().year))
+    team = request.GET.get('team', 'all')
+    absence_type = request.GET.get('type', 'all')
 
-    data = _get_planning_data(year, month)
+    data = _get_planning_data(year, month, team=team, absence_type=absence_type)
 
     response = HttpResponse(content_type='text/csv; charset=utf-8')
     response['Content-Disposition'] = f'attachment; filename="planning_{month}_{year}.csv"'

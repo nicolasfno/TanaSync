@@ -9,6 +9,7 @@ class Conge(models.Model):
     end_date = models.DateField()
     reason = models.TextField()
     status = models.CharField(max_length=20, default='Pending')
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
 
 
 

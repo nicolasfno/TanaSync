@@ -15,13 +15,15 @@
     {% include 'rh/topbar.html' %}
     <div class="content">
       <div class="planning-container">
+
         <!-- Header -->
         <div class="planning-header">
             <div class="header-title">
                 <h1>Planning global de l'équipe</h1>
                 <p>Vue d'ensemble des absences et disponibilités</p>
             </div>
-            <a href="{% url 'export_planning_csv' %}?month={{ current_month }}&year={{ year }}" class="export-btn" style="text-decoration:none;">
+            <a href="{% url 'export_planning_csv' %}?month={{ current_month }}&year={{ year }}&team={{ selected_team }}&type={{ selected_type }}"
+               class="export-btn" style="text-decoration:none;">
                 <span class="download-icon">⬇</span> Exporter (CSV)
             </a>
         </div>
@@ -32,35 +34,44 @@
                 <div class="summary-icon">👥</div>
                 <div class="summary-info">
                     <span class="summary-label">Disponibles aujourd'hui</span>
-                    <span class="summary-count">
-                        {{ available_count }}/{{ total_count }}
-                    </span>
+                    <span class="summary-count">{{ available_count }}/{{ total_count }}</span>
                 </div>
             </div>
         </div>
 
         <!-- Filters -->
-        <div class="filters-bar">
+        <form method="GET" action="." class="filters-bar">
+            <input type="hidden" name="month" value="{{ current_month }}">
+            <input type="hidden" name="year" value="{{ year }}">
+
             <div class="filter-group">
-                <button class="filter-btn active">
-                    <span class="filter-icon">👥</span>
-                    <span>Toutes les équipes</span>
-                    <span class="dropdown-arrow">▼</span>
-                </button>
+                <select name="team" class="filter-btn {% if selected_team != 'all' %}active{% endif %}"
+                        onchange="this.form.submit()">
+                    <option value="all"     {% if selected_team == 'all' %}selected{% endif %}>👥 Toutes les équipes</option>
+                    <option value="employes"{% if selected_team == 'employes' %}selected{% endif %}>👤 Employés</option>
+                    <option value="rh"      {% if selected_team == 'rh' %}selected{% endif %}>🧑‍💼 RH</option>
+                </select>
             </div>
+
             <div class="filter-group">
-                <button class="filter-btn active">
-                    <span class="filter-icon">🔍</span>
-                    <span>Tous les types</span>
-                    <span class="dropdown-arrow">▼</span>
-                </button>
+                <select name="type" class="filter-btn {% if selected_type != 'all' %}active{% endif %}"
+                        onchange="this.form.submit()">
+                    <option value="all"       {% if selected_type == 'all' %}selected{% endif %}>🔍 Tous les types</option>
+                    <option value="congé"     {% if selected_type == 'congé' %}selected{% endif %}>🔴 Congé</option>
+                    <option value="formation" {% if selected_type == 'formation' %}selected{% endif %}>🟤 Formation</option>
+                    <option value="maladie"   {% if selected_type == 'maladie' %}selected{% endif %}>🩺 Maladie</option>
+                    <option value="repos"     {% if selected_type == 'repos' %}selected{% endif %}>⚫ Repos</option>
+                </select>
             </div>
+
             <div class="month-navigation">
-                <a href="?month={{ prev_month }}&year={{ prev_year }}" class="nav-btn" style="text-decoration:none;">‹</a>
+                <a href="?month={{ prev_month }}&year={{ prev_year }}&team={{ selected_team }}&type={{ selected_type }}"
+                   class="nav-btn" style="text-decoration:none;">‹</a>
                 <span class="current-month" id="current-month">{{ month }}</span>
-                <a href="?month={{ next_month }}&year={{ next_year }}" class="nav-btn" style="text-decoration:none;">›</a>
+                <a href="?month={{ next_month }}&year={{ next_year }}&team={{ selected_team }}&type={{ selected_type }}"
+                   class="nav-btn" style="text-decoration:none;">›</a>
             </div>
-        </div>
+        </form>
 
         <!-- Planning Grid -->
         <div class="planning-grid">
@@ -100,6 +111,7 @@
                 {% endfor %}
             </div>
         </div>
+
       </div>
     </div>
   </main>
