@@ -3,7 +3,14 @@ from rh.models import Conge, ficheDePaie
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
-from utils import create_file  # Assurez-vous d'avoir une fonction pour créer un PDF
+from .utils import create_file  # Assurez-vous d'avoir une fonction pour créer un PDF
+from django.contrib.auth.decorators import login_required, user_passes_test
+
+
+
+
+
+
 # Create your views here.
 def liste_conges(request):
     if request.method == 'GET':
@@ -69,7 +76,6 @@ def modifier_conge(request, id):
             return JsonResponse({"error": "JSON invalide"}, status=400)
         
 
-from django.contrib.auth.decorators import user_passes_test
 
 def is_hr(user):
     return user.is_staff or user.groups.filter(name='RH').exists()
@@ -115,3 +121,39 @@ def list_pay_slips(request):
         for fiche in fiches
     ]
     return JsonResponse(data, safe=False)
+
+
+@login_required
+@user_passes_test(is_hr)
+def home_rh(request):
+    return render(request, "rh/index.html")
+
+@login_required
+@user_passes_test(is_hr)
+def vue_equipe(request):
+    return render(request, "rh/vue_equipe.html")
+
+@login_required
+@user_passes_test(is_hr)
+def validation_demandes(request):
+    return render(request, "rh/validation_demandes.html")
+
+@login_required
+@user_passes_test(is_hr)
+def planning_global(request):
+    return render(request, "rh/planning_global.html")
+
+@login_required
+@user_passes_test(is_hr)
+def absences_rh(request):
+    return render(request, "rh/absences_rh.html")
+
+@login_required
+@user_passes_test(is_hr)
+def fiches_de_paie_rh(request):
+    return render(request, "rh/fiches_de_paie.html")
+
+@login_required
+@user_passes_test(is_hr)
+def planning_rh(request):
+    return render(request, "rh/planning_rh.html")

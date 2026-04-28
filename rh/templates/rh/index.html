@@ -1,0 +1,155 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TanaSync — Accueil RH</title>
+  <link rel="stylesheet" href="{% static 'rh/css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'rh/css/home.css' %}">
+</head>
+<body>
+
+  {% include 'rh/sidebar.html' %}
+
+  <main class="main">
+
+    {% include 'rh/topbar.html' %}
+
+    <div class="content">
+
+      <section class="dashboard-top">
+        <div class="page-header">
+          <h1 class="page-title">Bonjour, {{ user.first_name }} — Vue Manager <span class="wave-emoji">👋</span></h1>
+          <p class="page-subtitle">Gérez votre équipe et validez les demandes</p>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-card-info">
+              <span class="stat-label">Effectif total</span>
+              <span class="stat-value">47</span>
+            </div>
+            <div class="stat-card-icon">👥</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-card-info">
+              <span class="stat-label">Demandes en attente</span>
+              <span class="stat-value">6</span>
+            </div>
+            <div class="stat-card-icon">⏳</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-card-info">
+              <span class="stat-label">En télétravail aujourd'hui</span>
+              <span class="stat-value">12</span>
+            </div>
+            <div class="stat-card-icon">🏠</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-card-info">
+              <span class="stat-label">En congé aujourd'hui</span>
+              <span class="stat-value">3</span>
+            </div>
+            <div class="stat-card-icon">📅</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-card-info">
+              <span class="stat-label">Messages non lus</span>
+              <span class="stat-value">8</span>
+            </div>
+            <div class="stat-card-icon">💬</div>
+          </div>
+        </div>
+      </section>
+
+      <div class="alerts-grid">
+        <div class="alert-card">
+          <div class="alert-card-body">
+            <span class="alert-icon">⚠️</span>
+            <div>
+              <p class="alert-title">2 fiches de paie à publier</p>
+              <p class="alert-text">Publiez les bulletins avant la fin de la semaine.</p>
+            </div>
+          </div>
+          <a href="#" class="btn btn-primary">Publier maintenant</a>
+        </div>
+
+        <div class="alert-card">
+          <div class="alert-card-body">
+            <span class="alert-icon">ℹ️</span>
+            <div>
+              <p class="alert-title">Formation obligatoire dans 5 jours</p>
+              <p class="alert-text">Vérifiez la présence et préparez le planning.</p>
+            </div>
+          </div>
+          <a href="#" class="btn btn-outline">Voir détails</a>
+        </div>
+      </div>
+
+      <div class="card requests-card">
+        <div class="requests-header">
+          <div>
+            <h2 class="card-title">Demandes en attente</h2>
+            <p class="card-subtitle">Dernières demandes de congés à traiter</p>
+          </div>
+          <a href="#" class="requests-link">Voir tout</a>
+        </div>
+
+        <div class="request-list">
+          <div class="request-item">
+            <div class="request-avatar">SM</div>
+            <div class="request-info">
+              <div class="request-topline">
+                <span class="request-name">Sophie Martin</span>
+                <span class="request-badge">Congé</span>
+              </div>
+              <p class="request-meta">15-20 Février 2025 · 5 jours</p>
+            </div>
+            <div class="request-actions">
+              <button class="btn btn-success">Approuver</button>
+              <button class="btn btn-danger">Refuser</button>
+            </div>
+          </div>
+
+          <div class="request-item">
+            <div class="request-avatar">TD</div>
+            <div class="request-info">
+              <div class="request-topline">
+                <span class="request-name">Thomas Dubois</span>
+                <span class="request-badge">Congé</span>
+              </div>
+              <p class="request-meta">12-14 Mars 2025 · 3 jours</p>
+            </div>
+            <div class="request-actions">
+              <button class="btn btn-success">Approuver</button>
+              <button class="btn btn-danger">Refuser</button>
+            </div>
+          </div>
+
+          <div class="request-item request-item--last">
+            <div class="request-avatar">CL</div>
+            <div class="request-info">
+              <div class="request-topline">
+                <span class="request-name">Claire Lemoine</span>
+                <span class="request-badge">Congé</span>
+              </div>
+              <p class="request-meta">22-24 Mars 2025 · 2 jours</p>
+            </div>
+            <div class="request-actions">
+              <button class="btn btn-success">Approuver</button>
+              <button class="btn btn-danger">Refuser</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+</body>
+</html>
