@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from rh.models import Conge, ficheDePaie
 # Import des helpers centralisés dans rh.views pour éviter la duplication
-from rh.views import _build_absences_context, _get_conge_type_label
+from rh.views import _build_absences_context, _get_conge_type_label, MONTH_NAMES_FR
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
@@ -15,7 +15,45 @@ from datetime import datetime
 # Create your views here.
 @login_required
 def home_employee(request):
-    return render(request, "employees/index.html")
+    profile = request.user.employee_profile
+    ctx = _build_absences_context(profile, 'mes_demandes')
+
+    activities = []
+    for conge in ctx['conges'][:5]:
+        if conge['status'] == 'Accepté':
+            icon, css, text = '✅', 'green', 'Votre demande de congé a été approuvée'
+        elif conge['status'] == 'Refusé':
+            icon, css, text = '❌', 'red', 'Votre demande de congé a été refusée'
+        else:
+            icon, css, text = '⏳', 'yellow', 'Demande de congé soumise'
+        activities.append({
+            'icon': icon, 'icon_class': css, 'text': text,
+            'date_label': conge['created_at'],
+        })
+
+    _mois_inverse = {v: k for k, v in MONTH_NAMES_FR.items()}
+    prochaine_paie = None
+    derniere_fiche = ficheDePaie.objects.filter(employee_profile=profile).order_by('-year', '-month').first()
+    if derniere_fiche:
+        try:
+            month_num = int(derniere_fiche.month)
+        except (ValueError, TypeError):
+            month_num = _mois_inverse.get(derniere_fiche.month, 1)
+        next_month = month_num % 12 + 1
+        next_year = int(derniere_fiche.year) + (1 if month_num == 12 else 0)
+        prochaine_paie = f"28 {MONTH_NAMES_FR[next_month]} {next_year}"
+
+        activities.append({
+            'icon': '📄', 'icon_class': 'rose',
+            'text': f'Fiche de paie disponible — {derniere_fiche.month} {derniere_fiche.year}',
+            'date_label': f'{derniere_fiche.month} {derniere_fiche.year}',
+        })
+
+    return render(request, "employees/index.html", {
+        'jours_restants': ctx['jours_restants'],
+        'prochaine_paie': prochaine_paie,
+        'activities': activities,
+    })
 
 
 def liste_conges(request):

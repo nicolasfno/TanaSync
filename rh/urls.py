@@ -10,6 +10,7 @@ urlpatterns = [
     path('absences/', views.absences_rh, name='absences_rh'),
     path('absences/annuler/<int:id>/', views.rh_annuler_conge, name='rh_annuler_conge'),
     path('fiches-paie/', views.fiches_de_paie_rh, name='fiches_de_paie_rh'),
+    path('fiches-paie/creer/', views.create_pay_slip, name='create_pay_slip'),
     path('planning/', views.planning_rh, name='planning_rh'),
     path('conges/', views.liste_conges, name='liste_conges'),
     path('conges/<int:employee_id>/', views.liste_conges_spe, name='liste_conges_spe'),

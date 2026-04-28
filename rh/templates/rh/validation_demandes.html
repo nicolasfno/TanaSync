@@ -22,7 +22,7 @@
           <h1>Validation des absences</h1>
           <p class="pending-notice">
             <span class="notice-icon">⚠️</span>
-            <strong>{{ pending_count }} demandes</strong> en attente de validation
+            <strong>{{ pending_count }} demande{{ pending_count|pluralize }}</strong> en attente de validation
           </p>
         </div>
 
@@ -62,6 +62,8 @@
                   <span class="status-badge accepte">✓ Accepté</span>
                   {% elif conge.status == 'Refusé' %}
                   <span class="status-badge refuse">✗ Refusé</span>
+                  {% elif conge.status == 'Pending' %}
+                  <span class="status-badge pending">⏳ En attente</span>
                   {% endif %}
                 {% endif %}
               </div>

@@ -2,11 +2,12 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from rh.models import Conge, ficheDePaie
 from employees.models import EmployeeProfile
+from django.db.models import Q
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 import csv
-from .utils import create_file  # Assurez-vous d'avoir une fonction pour créer un PDF
+from .utils import create_file
 from django.contrib.auth.decorators import login_required, user_passes_test
 from datetime import datetime, timedelta
 import calendar
@@ -83,26 +84,25 @@ def modifier_conge(request, id):
 def is_hr(user):
     return user.is_staff or user.groups.filter(name='RH').exists()
 
+@login_required
 @user_passes_test(is_hr)
 def create_pay_slip(request):
     if request.method == 'POST':
-        employee_id = request.POST.get('employee_id')
-        name = request.POST.get('name')
+        employee_profile_id = request.POST.get('employee_id')
         month = request.POST.get('month')
         year = request.POST.get('year')
         amount = request.POST.get('amount')
+        profile = EmployeeProfile.objects.select_related('user').get(id=employee_profile_id)
+        name = profile.user.get_full_name() or profile.user.username
         pdf_content = create_file(name, month, year, amount)
         filename = f"bulletin_{month}_{year}.pdf"
-
         fiche = ficheDePaie(
-            employee_id=employee_id,
-            month=month,
-            year=year,
-            amount=amount,
-            pdf_file=pdf_content
+            employee_profile_id=employee_profile_id,
+            month=month, year=year, amount=amount,
         )
         fiche.pdf_file.save(filename, pdf_content, save=True)
-        return JsonResponse({'message': 'Fiche de paie stockée', 'id': fiche.id})
+        return redirect('fiches_de_paie_rh')
+    return redirect('fiches_de_paie_rh')
 
 @user_passes_test(is_hr)
 def list_pay_slips(request):
@@ -110,7 +110,7 @@ def list_pay_slips(request):
     if employee_id:
         fiches = ficheDePaie.objects.filter(employee_id=employee_id).order_by('-year', '-month')
     else:
-        fiches = ficheDePaie.objects.all().order_by('-uploaded_at')
+        fiches = ficheDePaie.objects.all().order_by('-year', '-id')
 
     data = [
         {
@@ -335,7 +335,45 @@ def rh_annuler_conge(request, id):
 @login_required
 @user_passes_test(is_hr)
 def fiches_de_paie_rh(request):
-    return render(request, "rh/fiches_de_paie.html")
+    q = request.GET.get('q', '').strip()
+    try:
+        selected_year = int(request.GET.get('year', ''))
+    except (ValueError, TypeError):
+        selected_year = None
+
+    profiles = EmployeeProfile.objects.select_related('user').order_by('user__last_name')
+    if q:
+        profiles = profiles.filter(
+            Q(user__first_name__icontains=q) | Q(user__last_name__icontains=q)
+        )
+
+    employees_data = []
+    for idx, profile in enumerate(profiles):
+        fiches = ficheDePaie.objects.filter(employee_profile=profile).order_by('-year', '-id')
+        if selected_year:
+            fiches = fiches.filter(year=selected_year)
+        employees_data.append({
+            'id': profile.id,
+            'name': profile.user.get_full_name() or profile.user.username,
+            'initials': (
+                (profile.user.first_name[0] if profile.user.first_name else '') +
+                (profile.user.last_name[0] if profile.user.last_name else '')
+            ).upper(),
+            'avatar_color': AVATAR_COLORS[idx % len(AVATAR_COLORS)],
+            'fiches': list(fiches),
+        })
+
+    years = ficheDePaie.objects.values_list('year', flat=True).distinct().order_by('-year')
+
+    return render(request, "rh/fiches_de_paie.html", {
+        'employees_data': employees_data,
+        'all_profiles': EmployeeProfile.objects.select_related('user').order_by('user__last_name'),
+        'month_names': MONTH_NAMES_FR,
+        'current_year': datetime.now().year,
+        'q': q,
+        'selected_year': selected_year,
+        'years': years,
+    })
 
 @login_required
 @user_passes_test(is_hr)
