@@ -1,0 +1,104 @@
+
+  .absences-container { padding: 30px; background: #f8f9fa; min-height: 100vh; }
+
+  .page-header { margin-bottom: 28px; }
+  .page-header h1 { font-size: 2rem; font-weight: 700; color: #1a1a1a; margin: 0 0 4px; }
+  .page-header p  { font-size: 0.95rem; color: #7f8c8d; margin: 0; }
+
+  /* Tabs */
+  .tabs { display: flex; border-bottom: 2px solid #e9ecef; margin-bottom: 28px; gap: 0; }
+  .tab-link {
+    padding: 12px 22px; font-size: 0.95rem; font-weight: 500;
+    color: #7f8c8d; text-decoration: none;
+    border-bottom: 2px solid transparent; margin-bottom: -2px;
+    transition: all 0.2s;
+  }
+  .tab-link:hover { color: #2c3e50; }
+  .tab-link.active { color: #8B1A2E; border-bottom-color: #8B1A2E; font-weight: 600; }
+
+  /* Card container */
+  .card {
+    background: white; border-radius: 12px; padding: 28px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  }
+  .card-title { font-size: 1rem; font-weight: 600; color: #1a1a1a; margin: 0 0 4px; }
+  .card-subtitle { font-size: 0.88rem; color: #95a5a6; margin: 0 0 24px; }
+
+  /* Form */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group.full { grid-column: 1 / -1; }
+  .form-label { font-size: 0.9rem; font-weight: 600; color: #2c3e50; }
+  .form-control {
+    padding: 12px 14px; border: 1.5px solid #e0e0e0; border-radius: 8px;
+    font-size: 0.9rem; color: #2c3e50; background: #f8f9fa;
+    transition: border-color 0.2s; outline: none; width: 100%; box-sizing: border-box;
+  }
+  .form-control:focus { border-color: #8B1A2E; background: white; }
+  textarea.form-control { resize: vertical; min-height: 100px; }
+
+  .btn-submit {
+    width: 100%; padding: 14px; background: #8B1A2E; color: white;
+    border: none; border-radius: 8px; font-size: 1rem; font-weight: 600;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    gap: 10px; transition: background 0.2s; margin-top: 8px;
+  }
+  .btn-submit:hover { background: #6e1524; }
+
+  /* Demandes list */
+  .demandes-list { display: flex; flex-direction: column; gap: 14px; }
+  .demande-row {
+    display: flex; align-items: center; gap: 16px;
+    padding: 16px 20px; border: 1.5px solid #f0f0f0; border-radius: 10px;
+    background: white; transition: border-color 0.2s;
+  }
+  .demande-row:hover { border-color: #ddd; }
+  .demande-type {
+    background: #f8f9fa; border-radius: 6px; padding: 6px 12px;
+    font-size: 0.82rem; font-weight: 600; color: #555; white-space: nowrap;
+  }
+  .demande-dates { flex: 1; font-size: 0.9rem; color: #2c3e50; }
+  .demande-dates .days { font-size: 0.8rem; color: #95a5a6; margin-top: 2px; }
+  .status-pill {
+    border-radius: 999px; padding: 4px 14px; font-size: 0.8rem; font-weight: 600; white-space: nowrap;
+  }
+  .status-pill.pending  { background: #fff8e1; color: #f39c12; }
+  .status-pill.accepte  { background: #eafaf1; color: #27ae60; }
+  .status-pill.refuse   { background: #fdf2f2; color: #e74c3c; }
+
+  .btn-cancel {
+    background: none; border: 1.5px solid #e74c3c; color: #e74c3c;
+    border-radius: 6px; padding: 5px 12px; font-size: 0.8rem; font-weight: 600;
+    cursor: pointer; transition: all 0.2s; white-space: nowrap;
+  }
+  .btn-cancel:hover { background: #fdf2f2; }
+
+  /* Solde */
+  .solde-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 24px; }
+  .solde-card {
+    border-radius: 10px; padding: 20px 24px; text-align: center;
+  }
+  .solde-card.restants { background: #eafaf1; }
+  .solde-card.pris     { background: #fef9e7; }
+  .solde-card.attente  { background: #ebf5fb; }
+  .solde-number { font-size: 2.5rem; font-weight: 700; margin: 0 0 4px; }
+  .solde-card.restants .solde-number { color: #27ae60; }
+  .solde-card.pris     .solde-number { color: #e67e22; }
+  .solde-card.attente  .solde-number { color: #2980b9; }
+  .solde-label { font-size: 0.85rem; font-weight: 500; color: #555; }
+  .solde-progress-wrap { margin-top: 20px; }
+  .solde-progress-label {
+    display: flex; justify-content: space-between;
+    font-size: 0.85rem; color: #555; margin-bottom: 8px;
+  }
+  .progress-bar-bg { background: #e9ecef; border-radius: 999px; height: 10px; overflow: hidden; }
+  .progress-bar-fill { background: #8B1A2E; height: 10px; border-radius: 999px; transition: width 0.4s; }
+
+  .empty-state { text-align: center; padding: 48px 20px; color: #95a5a6; }
+  .empty-icon { font-size: 2.5rem; margin-bottom: 12px; }
+
+  @media (max-width: 768px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .solde-grid { grid-template-columns: 1fr; }
+    .demande-row { flex-wrap: wrap; }
+  }
