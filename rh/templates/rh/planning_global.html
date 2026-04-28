@@ -7,17 +7,346 @@
   <title>Planning global - RH</title>
   <link rel="stylesheet" href="{% static 'rh/css/base.css' %}">
   <link rel="stylesheet" href="{% static 'rh/css/home.css' %}">
+  <link rel="stylesheet" href="{% static 'rh/css/planning_global.css' %}">
 </head>
 <body>
   {% include 'rh/sidebar.html' %}
   <main class="main">
     {% include 'rh/topbar.html' %}
     <div class="content">
-      <div class="page-header">
-        <h1 class="page-title">Planning global</h1>
-        <p class="page-subtitle">Page RH vide pour le moment.</p>
+      <div class="planning-container">
+        <!-- Header -->
+        <div class="planning-header">
+            <div class="header-title">
+                <h1>Planning global de l'équipe</h1>
+                <p>Vue d'ensemble des absences et disponibilités</p>
+            </div>
+            <button class="export-btn">
+                <span class="download-icon">⬇</span> Exporter (CSV)
+            </button>
+        </div>
+
+        <!-- Disponibilité Summary -->
+        <div class="availability-summary">
+            <div class="summary-content">
+                <div class="summary-icon">👥</div>
+                <div class="summary-info">
+                    <span class="summary-label">Disponibles aujourd'hui</span>
+                    <span class="summary-count">
+                        <span id="available-count">6</span>/<span id="total-count">8</span>
+                    </span>
+                </div>
+            </div>
+            <div class="summary-avatars" id="available-avatars">
+                <!-- Avatars dynamiques des employés disponibles seront insérés ici -->
+                <div class="avatar-initials" style="background-color: #FFD95A;">JD</div>
+                <div class="avatar-initials" style="background-color: #6ECB63;">SM</div>
+                <div class="avatar-initials" style="background-color: #4ECDC4;">LP</div>
+                <div class="avatar-initials" style="background-color: #FF6B9D;">JM</div>
+                <div class="avatar-initials" style="background-color: #95E1D3;">AD</div>
+                <div class="avatar-initials" style="background-color: #F38181;">NP</div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters-bar">
+            <div class="filter-group">
+                <button class="filter-btn active">
+                    <span class="filter-icon">👥</span>
+                    <span>Toutes les équipes</span>
+                    <span class="dropdown-arrow">▼</span>
+                </button>
+            </div>
+            <div class="filter-group">
+                <button class="filter-btn active">
+                    <span class="filter-icon">🔍</span>
+                    <span>Tous les types</span>
+                    <span class="dropdown-arrow">▼</span>
+                </button>
+            </div>
+            <div class="month-navigation">
+                <button class="nav-btn prev-month">‹</button>
+                <span class="current-month" id="current-month">Mai 2026</span>
+                <button class="nav-btn next-month">›</button>
+            </div>
+        </div>
+
+        <!-- Planning Grid -->
+        <div class="planning-grid">
+            <!-- Column Headers (Days) -->
+            <div class="grid-header">
+                <div class="employee-column">Membre</div>
+                <div class="days-header" id="days-header">
+                    <!-- Jours dynamiques seront insérés ici -->
+                    <div class="day-cell">1</div>
+                    <div class="day-cell">2</div>
+                    <div class="day-cell">3</div>
+                    <div class="day-cell">4</div>
+                    <div class="day-cell">5</div>
+                    <div class="day-cell">6</div>
+                    <div class="day-cell">7</div>
+                    <div class="day-cell">8</div>
+                    <div class="day-cell">9</div>
+                    <div class="day-cell">10</div>
+                    <div class="day-cell">11</div>
+                    <div class="day-cell">12</div>
+                    <div class="day-cell">13</div>
+                    <div class="day-cell">14</div>
+                    <div class="day-cell">15</div>
+                    <div class="day-cell">16</div>
+                    <div class="day-cell">17</div>
+                    <div class="day-cell">18</div>
+                </div>
+            </div>
+
+            <!-- Employee Rows -->
+            <div class="grid-body">
+                <!-- Row pour chaque employé -->
+                <div class="employee-row" data-employee-id="1">
+                    <div class="employee-info">
+                        <div class="employee-avatar" style="background-color: #FFB6C1;">JD</div>
+                        <div class="employee-details">
+                            <div class="employee-name">Jean Dupont</div>
+                            <div class="employee-role">Développeur</div>
+                        </div>
+                    </div>
+                    <div class="days-row">
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell absence" data-type="congé" title="Congé">Congé</div>
+                        <div class="day-cell absence" data-type="congé" title="Congé">Congé</div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell available" data-type="TT" title="Télétravail">TT</div>
+                    </div>
+                </div>
+
+                <div class="employee-row" data-employee-id="2">
+                    <div class="employee-info">
+                        <div class="employee-avatar" style="background-color: #DEB887;">SM</div>
+                        <div class="employee-details">
+                            <div class="employee-name">Sophie Martin</div>
+                            <div class="employee-role">Designer</div>
+                        </div>
+                    </div>
+                    <div class="days-row">
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell absence" data-type="formation" title="Formation">Formation</div>
+                        <div class="day-cell absence" data-type="formation" title="Formation">Formation</div>
+                        <div class="day-cell absence" data-type="formation" title="Formation">Formation</div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                    </div>
+                </div>
+
+                <div class="employee-row" data-employee-id="3">
+                    <div class="employee-info">
+                        <div class="employee-avatar" style="background-color: #4ECDC4;">MD</div>
+                        <div class="employee-details">
+                            <div class="employee-name">Marc Dubois</div>
+                            <div class="employee-role">Chef de projet</div>
+                        </div>
+                    </div>
+                    <div class="days-row">
+                        <div class="day-cell"></div>
+                        <div class="day-cell available" data-type="TT" title="Télétravail">TT</div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell absence" data-type="congé" title="Congé">Congé</div>
+                        <div class="day-cell absence" data-type="congé" title="Congé">Congé</div>
+                        <div class="day-cell"></div>
+                    </div>
+                </div>
+
+                <div class="employee-row" data-employee-id="4">
+                    <div class="employee-info">
+                        <div class="employee-avatar" style="background-color: #FFB6C1;">EB</div>
+                        <div class="employee-details">
+                            <div class="employee-name">Emma Bernard</div>
+                            <div class="employee-role">Développeuse</div>
+                        </div>
+                    </div>
+                    <div class="days-row">
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell absence" data-type="congé" title="Congé">Congé</div>
+                        <div class="day-cell absence" data-type="congé" title="Congé">Congé</div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                    </div>
+                </div>
+
+                <div class="employee-row" data-employee-id="5">
+                    <div class="employee-info">
+                        <div class="employee-avatar" style="background-color: #FFD95A;">LP</div>
+                        <div class="employee-details">
+                            <div class="employee-name">Lucas Petit</div>
+                            <div class="employee-role">Testeur</div>
+                        </div>
+                    </div>
+                    <div class="days-row">
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                    </div>
+                </div>
+
+                <div class="employee-row" data-employee-id="6">
+                    <div class="employee-info">
+                        <div class="employee-avatar" style="background-color: #FF6B9D;">JM</div>
+                        <div class="employee-details">
+                            <div class="employee-name">Julie Moreau</div>
+                            <div class="employee-role">Responsable QA</div>
+                        </div>
+                    </div>
+                    <div class="days-row">
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                    </div>
+                </div>
+
+                <div class="employee-row" data-employee-id="7">
+                    <div class="employee-info">
+                        <div class="employee-avatar" style="background-color: #95E1D3;">AD</div>
+                        <div class="employee-details">
+                            <div class="employee-name">Antoine Delorme</div>
+                            <div class="employee-role">Backend Developer</div>
+                        </div>
+                    </div>
+                    <div class="days-row">
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                    </div>
+                </div>
+
+                <div class="employee-row" data-employee-id="8">
+                    <div class="employee-info">
+                        <div class="employee-avatar" style="background-color: #F38181;">NP</div>
+                        <div class="employee-details">
+                            <div class="employee-name">Nathalie Perrin</div>
+                            <div class="employee-role">Product Manager</div>
+                        </div>
+                    </div>
+                    <div class="days-row">
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                        <div class="day-cell"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
       </div>
     </div>
   </main>
+
+  <script src="{% static 'rh/js/planning_global.js' %}"></script>
 </body>
 </html>

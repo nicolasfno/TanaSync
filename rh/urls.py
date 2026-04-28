@@ -12,4 +12,9 @@ urlpatterns = [
     path('conges/', views.liste_conges, name='liste_conges'),
     path('conges/<int:employee_id>/', views.liste_conges_spe, name='liste_conges_spe'),
     path('conges/modifier/<int:id>/', views.modifier_conge, name='modifier_conge'),
+    # API Endpoints
+    path('api/planning/<int:year>/<int:month>/', views.api_planning_global, name='api_planning_global'),
+    path('api/employees/', views.api_employees, name='api_employees'),
+    path('api/conges/pending/', views.api_conges_pending, name='api_conges_pending'),
+    path('api/pay-slips/', views.list_pay_slips, name='api_pay_slips'),  # Déjà existe
 ]

@@ -1,10 +1,13 @@
 from django.shortcuts import render
 from rh.models import Conge, ficheDePaie
+from employees.models import EmployeeProfile
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 from .utils import create_file  # Assurez-vous d'avoir une fonction pour créer un PDF
 from django.contrib.auth.decorators import login_required, user_passes_test
+from datetime import datetime, timedelta
+import calendar
 
 
 
@@ -157,3 +160,180 @@ def fiches_de_paie_rh(request):
 @user_passes_test(is_hr)
 def planning_rh(request):
     return render(request, "rh/planning_rh.html")
+
+
+# ==================== API ENDPOINTS ====================
+
+@login_required
+@user_passes_test(is_hr)
+def api_planning_global(request, year, month):
+    """
+    API endpoint pour récupérer les données du planning global pour un mois donné.
+    
+    Format de réponse:
+    {
+        "month": "Mai 2026",
+        "employees": [
+            {
+                "id": 1,
+                "name": "Jean Dupont",
+                "role": "Développeur",
+                "avatar_initials": "JD",
+                "avatar_color": "#FFB6C1",
+                "available_today": true,
+                "total_days_in_month": 31,
+                "absences": [
+                    {
+                        "date": "2026-05-08",
+                        "type": "congé",
+                        "label": "Congé"
+                    }
+                ]
+            }
+        ],
+        "available_count": 6,
+        "total_count": 8,
+        "today": "2026-04-28"
+    }
+    """
+    if request.method == 'GET':
+        try:
+            # Obtenir tous les employés avec leur profil
+            employees = EmployeeProfile.objects.filter(role='Employe').select_related('user')
+            
+            # Obtenir le nombre de jours dans le mois
+            days_in_month = calendar.monthrange(year, month)[1]
+            
+            # Date d'aujourd'hui
+            today = datetime.now().date()
+            
+            # Mapper les mois en français
+            month_names = {
+                1: 'Janvier', 2: 'Février', 3: 'Mars', 4: 'Avril',
+                5: 'Mai', 6: 'Juin', 7: 'Juillet', 8: 'Août',
+                9: 'Septembre', 10: 'Octobre', 11: 'Novembre', 12: 'Décembre'
+            }
+            
+            # Couleurs pour les avatars
+            avatar_colors = [
+                '#FFB6C1', '#DEB887', '#4ECDC4', '#FFB6C1',
+                '#FFD95A', '#FF6B9D', '#95E1D3', '#F38181'
+            ]
+            
+            employees_data = []
+            available_count = 0
+            
+            for idx, employee in enumerate(employees):
+                # Obtenir les initiales
+                user = employee.user
+                first_initial = user.first_name[0] if user.first_name else ''
+                last_initial = user.last_name[0] if user.last_name else ''
+                initials = (first_initial + last_initial).upper()
+                
+                # Couleur avatar
+                color = avatar_colors[idx % len(avatar_colors)]
+                
+                # Récupérer tous les congés pour cet employé ce mois
+                absences = []
+                conges = Conge.objects.filter(
+                    employee_profile=employee,
+                    status='Accepté'
+                ).filter(
+                    start_date__year=year,
+                    start_date__month__lte=month,
+                    end_date__month__gte=month
+                )
+                
+                # Ajouter les absences
+                absence_types = {
+                    'congé': 'Congé',
+                    'formation': 'Formation',
+                    'maladie': 'Maladie',
+                    'repos': 'Repos'
+                }
+                
+                for conge in conges:
+                    current_date = conge.start_date
+                    while current_date <= conge.end_date:
+                        # Vérifier que la date est dans le mois actuel
+                        if current_date.month == month and current_date.year == year:
+                            absences.append({
+                                'date': str(current_date),
+                                'type': 'congé',
+                                'label': 'Congé'
+                            })
+                        current_date += timedelta(days=1)
+                
+                # Vérifier si l'employé est disponible aujourd'hui
+                is_available_today = not any(abs['date'] == str(today) for abs in absences)
+                if is_available_today and today.month == month and today.year == year:
+                    available_count += 1
+                
+                employees_data.append({
+                    'id': employee.id,
+                    'name': user.get_full_name() or user.username,
+                    'role': employee.role,
+                    'avatar_initials': initials,
+                    'avatar_color': color,
+                    'available_today': is_available_today,
+                    'total_days_in_month': days_in_month,
+                    'absences': absences
+                })
+            
+            return JsonResponse({
+                'month': f'{month_names.get(month, "")} {year}',
+                'employees': employees_data,
+                'available_count': available_count,
+                'total_count': len(employees_data),
+                'today': str(today),
+                'current_date': str(today)
+            })
+            
+        except Exception as e:
+            return JsonResponse({
+                'error': str(e)
+            }, status=500)
+    
+    return JsonResponse({'error': 'Méthode non autorisée'}, status=405)
+
+
+@login_required
+@user_passes_test(is_hr)
+def api_employees(request):
+    """API pour récupérer tous les employés"""
+    if request.method == 'GET':
+        employees = EmployeeProfile.objects.all().select_related('user')
+        data = [
+            {
+                'id': emp.id,
+                'name': emp.user.get_full_name() or emp.user.username,
+                'role': emp.role,
+                'email': emp.user.email,
+                'date_joined': str(emp.date_joined)
+            }
+            for emp in employees
+        ]
+        return JsonResponse(data, safe=False)
+    return JsonResponse({'error': 'Méthode non autorisée'}, status=405)
+
+
+@login_required
+@user_passes_test(is_hr)
+def api_conges_pending(request):
+    """API pour récupérer les congés en attente de validation"""
+    if request.method == 'GET':
+        conges = Conge.objects.filter(status='Pending').select_related('employee_profile__user')
+        data = [
+            {
+                'id': conge.id,
+                'employee_id': conge.employee_profile.id,
+                'employee_name': conge.employee_profile.user.get_full_name(),
+                'start_date': str(conge.start_date),
+                'end_date': str(conge.end_date),
+                'reason': conge.reason,
+                'status': conge.status
+            }
+            for conge in conges
+        ]
+        return JsonResponse(data, safe=False)
+    return JsonResponse({'error': 'Méthode non autorisée'}, status=405)
