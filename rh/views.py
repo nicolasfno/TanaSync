@@ -3,7 +3,8 @@ from django.urls import reverse
 from rh.models import Conge, ficheDePaie
 from employees.models import EmployeeProfile
 from django.db.models import Q
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, FileResponse
+import os
 from django.views.decorators.csrf import csrf_exempt
 import json
 import csv
@@ -103,6 +104,26 @@ def create_pay_slip(request):
         fiche.pdf_file.save(filename, pdf_content, save=True)
         return redirect('fiches_de_paie_rh')
     return redirect('fiches_de_paie_rh')
+
+@login_required
+@user_passes_test(is_hr)
+def view_pay_slip_rh(request, fiche_id):
+    fiche = ficheDePaie.objects.get(id=fiche_id)
+    path = fiche.pdf_file.path
+    filename = os.path.basename(path)
+    response = FileResponse(open(path, 'rb'), content_type='application/pdf')
+    response['Content-Disposition'] = f'inline; filename="{filename}"'
+    return response
+
+@login_required
+@user_passes_test(is_hr)
+def download_pay_slip_rh(request, fiche_id):
+    fiche = ficheDePaie.objects.get(id=fiche_id)
+    path = fiche.pdf_file.path
+    filename = os.path.basename(path)
+    response = FileResponse(open(path, 'rb'), content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    return response
 
 @user_passes_test(is_hr)
 def list_pay_slips(request):

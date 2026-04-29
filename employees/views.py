@@ -3,11 +3,11 @@ from django.urls import reverse
 from rh.models import Conge, ficheDePaie
 # Import des helpers centralisés dans rh.views pour éviter la duplication
 from rh.views import _build_absences_context, _get_conge_type_label, MONTH_NAMES_FR
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse, Http404, FileResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
+import os
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, Http404
 import calendar
 from datetime import datetime
 
@@ -138,8 +138,37 @@ def mes_absences(request):
 
 @login_required
 def my_pay_slips(request):
-    fiches = ficheDePaie.objects.filter(employee_profile__user=request.user).order_by('-year', '-month')
-    return render(request, 'employees/my_fiches.html', {'fiches': fiches})
+    qs = ficheDePaie.objects.filter(employee_profile__user=request.user)
+    years = sorted(qs.values_list('year', flat=True).distinct(), reverse=True)
+    selected_year = None
+    raw = request.GET.get('year')
+    if raw:
+        try:
+            selected_year = int(raw)
+            qs = qs.filter(year=selected_year)
+        except ValueError:
+            pass
+    if selected_year is None and years:
+        selected_year = years[0]
+        qs = qs.filter(year=selected_year)
+    fiches = qs.order_by('-year', '-month')
+    return render(request, 'employees/my_fiches.html', {
+        'fiches': fiches,
+        'years': years,
+        'selected_year': selected_year,
+    })
+
+
+@login_required
+def view_pay_slip_employee(request, fiche_id):
+    try:
+        fiche = ficheDePaie.objects.get(id=fiche_id, employee_profile__user=request.user)
+    except ficheDePaie.DoesNotExist:
+        raise Http404("Fiche introuvable ou accès refusé")
+    filename = os.path.basename(fiche.pdf_file.name)
+    response = FileResponse(fiche.pdf_file.open('rb'), content_type='application/pdf')
+    response['Content-Disposition'] = f'inline; filename="{filename}"'
+    return response
 
 
 @login_required
@@ -148,8 +177,9 @@ def download_pay_slip(request, fiche_id):
         fiche = ficheDePaie.objects.get(id=fiche_id, employee_profile__user=request.user)
     except ficheDePaie.DoesNotExist:
         raise Http404("Fiche introuvable ou accès refusé")
-    response = HttpResponse(fiche.pdf_file, content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename="Fiche_Paie_{fiche.month}_{fiche.year}.pdf"'
+    filename = os.path.basename(fiche.pdf_file.name)
+    response = FileResponse(fiche.pdf_file.open('rb'), content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
     return response
 
 

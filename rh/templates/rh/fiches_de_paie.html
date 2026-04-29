@@ -110,8 +110,8 @@
                 <span class="amount-value">{{ fiche.amount|floatformat:2 }} €</span>
               </div>
               <div class="fiche-actions">
-                <a href="{{ fiche.pdf_file.url }}" target="_blank" class="btn-voir">👁 Voir</a>
-                <a href="{{ fiche.pdf_file.url }}" download class="btn-dl" title="Télécharger">⬇</a>
+                <a href="{% url 'view_pay_slip_rh' fiche.id %}" target="_blank" class="btn-voir">👁 Voir</a>
+                <a href="{% url 'download_pay_slip_rh' fiche.id %}" class="btn-dl" title="Télécharger">⬇</a>
               </div>
             </div>
             {% endfor %}

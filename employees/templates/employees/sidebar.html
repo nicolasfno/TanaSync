@@ -20,31 +20,20 @@
       <img src="{% static 'employees/abscences.svg' %}" alt="" width="24" height="24">
       <span>Mes absences</span>
     </a>
-    <a href="{% url 'fdp' %}" class="nav-item {% if request.resolver_match.url_name == 'fdp' %}active{% endif %}">
+    <a href="{% url 'my_pay_slips' %}" class="nav-item {% if request.resolver_match.url_name == 'my_pay_slips' %}active{% endif %}">
       <img src="{% static 'employees/liste.svg' %}" alt="" width="24" height="24">
-      <span>Ma fiche de paie</span>
+      <span>Mes fiches de paie</span>
     </a>
     <a href="{% url 'planning' %}" class="nav-item {% if request.resolver_match.url_name == 'planning' %}active{% endif %}">
       <img src="{% static 'employees/calendrier.svg' %}" alt="" width="24" height="24">
       <span>Mon planning</span>
     </a>
-    <a href="#" class="nav-item">
-      <img src="{% static 'employees/messagerie.svg' %}" alt="" width="24" height="24">
-      <span>Messagerie</span>
-      <span class="nav-badge">3</span>
-    </a>
-    <a href="#" class="nav-item">
-      <img src="{% static 'employees/parametres.svg' %}" alt="" width="24" height="24">
-      <span>Paramètres</span>
-    </a>
+
   </nav>
 
   <!-- Footer sidebar -->
   <div class="sidebar-footer">
-    <button class="sidebar-footer-btn">
-      <img src="{% static 'employees/lune.svg' %}" alt="" width="20" height="20">
-      <span>Mode sombre</span>
-    </button>
+
     <button class="sidebar-collapse-btn" aria-label="Réduire la sidebar">‹</button>
   </div>
 </aside>

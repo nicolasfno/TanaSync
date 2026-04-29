@@ -15,10 +15,7 @@
       <img src="{% static 'employees/home.svg' %}" alt="" width="24" height="24">
       <span>Accueil</span>
     </a>
-    <a href="{% url 'vue_equipe' %}" class="nav-item {% if request.resolver_match.url_name == 'vue_equipe' %}active{% endif %}">
-      <img src="{% static 'employees/home.svg' %}" alt="" width="24" height="24">
-      <span>Vue équipe</span>
-    </a>
+
     <a href="{% url 'validation_demandes' %}" class="nav-item {% if request.resolver_match.url_name == 'validation_demandes' %}active{% endif %}">
       <img src="{% static 'employees/liste.svg' %}" alt="" width="24" height="24">
       <span>Validation des demandes</span>
@@ -44,10 +41,7 @@
 
   <!-- Footer sidebar -->
   <div class="sidebar-footer">
-    <button class="sidebar-footer-btn">
-      <img src="{% static 'employees/lune.svg' %}" alt="" width="20" height="20">
-      <span>Mode sombre</span>
-    </button>
+
     <button class="sidebar-collapse-btn" aria-label="Réduire la sidebar">‹</button>
   </div>
 </aside>

@@ -1,0 +1,183 @@
+/* =============================================
+   FICHES_EMPLOYE.CSS — Mes fiches de paie (employé)
+   ============================================= */
+
+.fdp-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 32px;
+}
+
+.fdp-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+.fdp-subtitle {
+  font-size: 14px;
+  color: #6B7280;
+}
+
+.fdp-year-select {
+  padding: 8px 36px 8px 12px;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  color: #374151;
+  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2'%3E%3Cpolyline points='6,9 12,15 18,9'/%3E%3C/svg%3E") no-repeat right 10px center;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  min-width: 130px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.fdp-year-select:focus {
+  outline: none;
+  border-color: #7D1E2E;
+}
+
+/* ── Grille de cartes ── */
+.fdp-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+/* ── Carte individuelle ── */
+.fdp-card {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #E5E7EB;
+  border-left: 4px solid #7D1E2E;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  padding: 24px;
+  width: 290px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: box-shadow 0.15s ease;
+}
+
+.fdp-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* ── En-tête de la carte ── */
+.fdp-card-top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.fdp-icon-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #FAE8EC;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.fdp-month-year {
+  font-size: 17px;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.2;
+}
+
+.fdp-type {
+  font-size: 12px;
+  color: #9CA3AF;
+  margin-top: 3px;
+}
+
+/* ── Séparateur ── */
+.fdp-divider {
+  height: 1px;
+  background: #F3F4F6;
+}
+
+/* ── Montant ── */
+.fdp-amount-section {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.fdp-amount-label {
+  font-size: 12px;
+  color: #6B7280;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.fdp-amount {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.5px;
+}
+
+/* ── Boutons d'action ── */
+.fdp-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.btn-fdp-voir,
+.btn-fdp-pdf {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  text-decoration: none;
+  cursor: pointer;
+  flex: 1;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.btn-fdp-voir {
+  border: 1.5px solid #7D1E2E;
+  background: #fff;
+  color: #7D1E2E;
+}
+
+.btn-fdp-voir:hover {
+  background: #FAE8EC;
+}
+
+.btn-fdp-pdf {
+  border: none;
+  background: #7D1E2E;
+  color: #fff;
+}
+
+.btn-fdp-pdf:hover {
+  background: #5E1520;
+}
+
+/* ── État vide ── */
+.fdp-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 80px 0;
+  color: #9CA3AF;
+  font-size: 15px;
+}
