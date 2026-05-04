@@ -1,0 +1,61 @@
+.calender-card {
+    background: var(--bg-card);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0,05);
+    width: 400px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.nav-btn {
+    border:1px solid #eee;
+    background: none;
+    border-radius: 6px;
+    padding: 5px 10px;
+    cursor: pointer;
+    color: var(--text-muted);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    color: var(--text-muted); 
+    font-weight: 500;
+    padding-bottom: 1rem;
+    font-size: 0.9rem;    
+}
+
+td {
+    text-align: center; 
+    padding: 12px 0; 
+    color: var(--text-main);
+    font-size: 0.95rem;
+    width: 14.28%;
+}
+
+.empty {
+    color: #eee;
+
+}
+
+/* Style pour le jour actuel (cercle rouge autour du numéro)*/
+
+.today{
+    background-color: var(--primary-color);
+    color: white !important;
+    border-radius: 50%;
+    display: inline-block;
+    width: 35px;
+    height: 35px;
+    line-height: 35px;
+    font-weight: bold;
+}

@@ -1,22 +1,39 @@
-<div class="calendar-card">
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendrier</title>
+</head>
+<body>
+    <div class="calendar-card">
     <div class="calendar-header">
         <button class="nav-btn">bubu</button>
         <h2>Mois</h2>
         <button class="nav-btn">bubu</button>
     </div>
-    <table class="calendar-table">
-        <thead>
-            <tr>
-                <th>Dim</th><th>Lun</th><th>Mar</th><th>Mer</th><th>Jeu</th><th>Ven</th><th>Sam</th>
-            </tr>
-        </thead>
-        <body>
-            {% for week in month_days %}
-        </body>
-    </table>
-
-
-
-
-
-/div>
+        <table class="calendar-table">
+            <thead>
+                <tr>
+                    <th>Dim</th><th>Lun</th><th>Mar</th><th>Mer</th><th>Jeu</th><th>Ven</th><th>Sam</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for week in month_days %}
+                <tr>
+                    {% For day in week %}
+                    <td>
+                        {% if day != 0 %}
+                            <span class="{{ 'today' if day == today else''}}">
+                                {{ day }}
+                            </span>
+                        {% endif %}
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
