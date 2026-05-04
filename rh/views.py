@@ -150,7 +150,47 @@ def list_pay_slips(request):
 @login_required
 @user_passes_test(is_hr)
 def home_rh(request):
-    return render(request, "rh/index.html")
+    from datetime import date
+    today = date.today()
+
+    total_employees = EmployeeProfile.objects.count()
+    pending_count = Conge.objects.filter(status='Pending').count()
+
+    on_leave_today = Conge.objects.filter(
+        status='Accepté',
+        start_date__lte=today,
+        end_date__gte=today,
+    ).values('employee_profile').distinct().count()
+
+    pending_conges_qs = Conge.objects.filter(
+        status='Pending'
+    ).select_related('employee_profile__user').order_by('-created_at')[:5]
+
+    pending_conges = []
+    for idx, conge in enumerate(pending_conges_qs):
+        user = conge.employee_profile.user
+        first_initial = user.first_name[0] if user.first_name else ''
+        last_initial = user.last_name[0] if user.last_name else ''
+        days = (conge.end_date - conge.start_date).days + 1
+        pending_conges.append({
+            'id': conge.id,
+            'employee_name': user.get_full_name() or user.username,
+            'avatar_initials': (first_initial + last_initial).upper(),
+            'avatar_color': AVATAR_COLORS[idx % len(AVATAR_COLORS)],
+            'type_label': _get_conge_type_label(conge.reason),
+            'start_date': _format_date_fr(conge.start_date),
+            'end_date': _format_date_fr(conge.end_date),
+            'days': days,
+            'reason': conge.reason,
+            'created_at': _format_date_fr(conge.created_at.date()) if conge.created_at else '',
+        })
+
+    return render(request, "rh/index.html", {
+        'total_employees': total_employees,
+        'pending_count': pending_count,
+        'on_leave_today': on_leave_today,
+        'pending_conges': pending_conges,
+    })
 
 @login_required
 @user_passes_test(is_hr)

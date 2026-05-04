@@ -7,6 +7,7 @@
   <title>TanaSync — Accueil RH</title>
   <link rel="stylesheet" href="{% static 'rh/css/base.css' %}">
   <link rel="stylesheet" href="{% static 'rh/css/home.css' %}">
+  <link rel="stylesheet" href="{% static 'rh/css/validation.css' %}">
 </head>
 <body>
 
@@ -28,7 +29,7 @@
           <div class="stat-card">
             <div class="stat-card-info">
               <span class="stat-label">Effectif total</span>
-              <span class="stat-value">47</span>
+              <span class="stat-value">{{ total_employees }}</span>
             </div>
             <div class="stat-card-icon">👥</div>
           </div>
@@ -36,33 +37,17 @@
           <div class="stat-card">
             <div class="stat-card-info">
               <span class="stat-label">Demandes en attente</span>
-              <span class="stat-value">6</span>
+              <span class="stat-value">{{ pending_count }}</span>
             </div>
             <div class="stat-card-icon">⏳</div>
           </div>
 
           <div class="stat-card">
             <div class="stat-card-info">
-              <span class="stat-label">En télétravail aujourd'hui</span>
-              <span class="stat-value">12</span>
-            </div>
-            <div class="stat-card-icon">🏠</div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-card-info">
               <span class="stat-label">En congé aujourd'hui</span>
-              <span class="stat-value">3</span>
+              <span class="stat-value">{{ on_leave_today }}</span>
             </div>
             <div class="stat-card-icon">📅</div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-card-info">
-              <span class="stat-label">Messages non lus</span>
-              <span class="stat-value">8</span>
-            </div>
-            <div class="stat-card-icon">💬</div>
           </div>
         </div>
       </section>
@@ -97,55 +82,54 @@
             <h2 class="card-title">Demandes en attente</h2>
             <p class="card-subtitle">Dernières demandes de congés à traiter</p>
           </div>
-          <a href="#" class="requests-link">Voir tout</a>
+          <a href="{% url 'validation_demandes' %}" class="requests-link">Voir tout</a>
         </div>
 
-        <div class="request-list">
-          <div class="request-item">
-            <div class="request-avatar">SM</div>
-            <div class="request-info">
-              <div class="request-topline">
-                <span class="request-name">Sophie Martin</span>
-                <span class="request-badge">Congé</span>
-              </div>
-              <p class="request-meta">15-20 Février 2025 · 5 jours</p>
+        <div class="cards-list">
+          {% for conge in pending_conges %}
+          <div class="conge-card">
+            <div class="card-avatar" style="background-color: {{ conge.avatar_color }};">
+              {{ conge.avatar_initials }}
             </div>
-            <div class="request-actions">
-              <button class="btn btn-success">Approuver</button>
-              <button class="btn btn-danger">Refuser</button>
+            <div class="card-body">
+              <div class="card-name-row">
+                <span class="card-name">{{ conge.employee_name }}</span>
+                <span class="type-badge">{{ conge.type_label }}</span>
+                <span class="status-badge pending">⏳ En attente</span>
+              </div>
+              <div class="card-dates">
+                📅 {{ conge.start_date }} → {{ conge.end_date }}
+                <span class="days-count">({{ conge.days }} jour{{ conge.days|pluralize }})</span>
+              </div>
+              <div class="card-reason">
+                <span>Commentaire:</span> {{ conge.reason }}
+              </div>
+              {% if conge.created_at %}
+              <p class="card-submitted">Soumis le {{ conge.created_at }}</p>
+              {% endif %}
+            </div>
+            <div class="card-actions">
+              <form method="POST" action="{% url 'traiter_conge' conge.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="tab" value="a_valider">
+                <button type="submit" name="action" value="approuver" class="btn-approve">
+                  ✓ Approuver
+                </button>
+              </form>
+              <form method="POST" action="{% url 'traiter_conge' conge.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="tab" value="a_valider">
+                <button type="submit" name="action" value="refuser" class="btn-refuse">
+                  ✗ Refuser
+                </button>
+              </form>
             </div>
           </div>
-
-          <div class="request-item">
-            <div class="request-avatar">TD</div>
-            <div class="request-info">
-              <div class="request-topline">
-                <span class="request-name">Thomas Dubois</span>
-                <span class="request-badge">Congé</span>
-              </div>
-              <p class="request-meta">12-14 Mars 2025 · 3 jours</p>
-            </div>
-            <div class="request-actions">
-              <button class="btn btn-success">Approuver</button>
-              <button class="btn btn-danger">Refuser</button>
-            </div>
-          </div>
-
-          <div class="request-item request-item--last">
-            <div class="request-avatar">CL</div>
-            <div class="request-info">
-              <div class="request-topline">
-                <span class="request-name">Claire Lemoine</span>
-                <span class="request-badge">Congé</span>
-              </div>
-              <p class="request-meta">22-24 Mars 2025 · 2 jours</p>
-            </div>
-            <div class="request-actions">
-              <button class="btn btn-success">Approuver</button>
-              <button class="btn btn-danger">Refuser</button>
-            </div>
-          </div>
+          {% empty %}
+          <div class="empty-state">Aucune demande en attente.</div>
+          {% endfor %}
         </div>
+
       </div>
 
     </div>
