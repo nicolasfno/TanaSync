@@ -1,0 +1,20 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mes absences - RH</title>
+  <link rel="stylesheet" href="{% static 'rh/css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'rh/css/home.css' %}">
+</head>
+<body>
+  {% include 'rh/sidebar.html' %}
+  <main class="main">
+    {% include 'rh/topbar.html' %}
+    <div class="content">
+      {% include 'shared/absences_content.html' %}
+    </div>
+  </main>
+</body>
+</html>

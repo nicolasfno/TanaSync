@@ -1,0 +1,135 @@
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'employees/css/abscence_content.css' %}">
+
+<div class="absences-container">
+
+  <!-- Header -->
+  <div class="page-header">
+    <h1>Demandes d'absences</h1>
+    <p>Gérez vos demandes et consultez vos soldes</p>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <a href="?tab=nouvelle"     class="tab-link {% if tab == 'nouvelle' %}active{% endif %}">Nouvelle demande</a>
+    <a href="?tab=mes_demandes" class="tab-link {% if tab == 'mes_demandes' %}active{% endif %}">Mes demandes</a>
+    <a href="?tab=solde"        class="tab-link {% if tab == 'solde' %}active{% endif %}">Mon solde</a>
+  </div>
+
+  <!-- ===== TAB : NOUVELLE DEMANDE ===== -->
+  {% if tab == 'nouvelle' %}
+  <div class="card">
+    <p class="card-title">Nouvelle demande d'absence</p>
+    <p class="card-subtitle">Remplissez le formulaire ci-dessous pour soumettre votre demande</p>
+
+    <form method="POST" action=".">
+      {% csrf_token %}
+      <input type="hidden" name="tab" value="nouvelle">
+
+      <div class="form-group full">
+        <label class="form-label">Type d'absence</label>
+        <select name="type_absence" class="form-control" required>
+          <option value="" disabled selected>Sélectionnez un type</option>
+          {% for value, label in types_absence %}
+          <option value="{{ value }}">{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Date de début</label>
+          <input type="date" name="start_date" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Date de fin</label>
+          <input type="date" name="end_date" class="form-control" required>
+        </div>
+      </div>
+
+      <div class="form-group full">
+        <label class="form-label">Commentaire</label>
+        <textarea name="commentaire" class="form-control"
+                  placeholder="Ajoutez des détails sur votre demande..."></textarea>
+      </div>
+
+      <button type="submit" class="btn-submit">
+        &#9992; Soumettre ma demande
+      </button>
+    </form>
+  </div>
+
+  <!-- ===== TAB : MES DEMANDES ===== -->
+  {% elif tab == 'mes_demandes' %}
+  <div class="card">
+    <p class="card-title">Mes demandes</p>
+    <p class="card-subtitle">Historique de toutes vos demandes d'absence</p>
+
+    {% if conges %}
+    <div class="demandes-list">
+      {% for conge in conges %}
+      <div class="demande-row">
+        <span class="demande-type">{{ conge.type_label }}</span>
+        <div class="demande-dates">
+          <div>{{ conge.start_date }} → {{ conge.end_date }}</div>
+          <div class="days">{{ conge.days }} jour{{ conge.days|pluralize }}{% if conge.created_at %} · Soumis le {{ conge.created_at }}{% endif %}</div>
+        </div>
+        {% if conge.status == 'Pending' %}
+          <span class="status-pill pending">⏳ En attente</span>
+          <form method="POST" action="{% url cancel_url_name conge.id %}" style="margin:0;">
+            {% csrf_token %}
+            <button type="submit" class="btn-cancel"
+                    onclick="return confirm('Annuler cette demande ?')">Annuler</button>
+          </form>
+        {% elif conge.status == 'Accepté' %}
+          <span class="status-pill accepte">✓ Accepté</span>
+        {% elif conge.status == 'Refusé' %}
+          <span class="status-pill refuse">✗ Refusé</span>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">📋</div>
+      <p>Aucune demande pour le moment.</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- ===== TAB : MON SOLDE ===== -->
+  {% elif tab == 'solde' %}
+  <div class="card">
+    <p class="card-title">Mon solde de congés — {{ quota_annuel }} jours / an</p>
+    <p class="card-subtitle">Récapitulatif pour l'année en cours</p>
+
+    <div class="solde-grid">
+      <div class="solde-card restants">
+        <div class="solde-number">{{ jours_restants }}</div>
+        <div class="solde-label">Jours restants</div>
+      </div>
+      <div class="solde-card pris">
+        <div class="solde-number">{{ jours_pris }}</div>
+        <div class="solde-label">Jours pris</div>
+      </div>
+      <div class="solde-card attente">
+        <div class="solde-number">{{ jours_en_attente }}</div>
+        <div class="solde-label">En attente</div>
+      </div>
+    </div>
+
+    <div class="solde-progress-wrap">
+      <div class="solde-progress-label">
+        <span>Congés utilisés</span>
+        <span>{{ jours_pris }} / {{ quota_annuel }} jours</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill"
+             style="width: {% widthratio jours_pris quota_annuel 100 %}%;"></div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+</div>

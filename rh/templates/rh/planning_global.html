@@ -1,0 +1,119 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Planning global - RH</title>
+  <link rel="stylesheet" href="{% static 'rh/css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'rh/css/home.css' %}">
+  <link rel="stylesheet" href="{% static 'rh/css/planning_global.css' %}">
+</head>
+<body>
+  {% include 'rh/sidebar.html' %}
+  <main class="main">
+    {% include 'rh/topbar.html' %}
+    <div class="content">
+      <div class="planning-container">
+
+        <!-- Header -->
+        <div class="planning-header">
+            <div class="header-title">
+                <h1>Planning global de l'équipe</h1>
+                <p>Vue d'ensemble des absences et disponibilités</p>
+            </div>
+            <a href="{% url 'export_planning_csv' %}?month={{ current_month }}&year={{ year }}&team={{ selected_team }}&type={{ selected_type }}"
+               class="export-btn" style="text-decoration:none;">
+                <span class="download-icon">⬇</span> Exporter (CSV)
+            </a>
+        </div>
+
+        <!-- Disponibilité Summary -->
+        <div class="availability-summary">
+            <div class="summary-content">
+                <div class="summary-icon">👥</div>
+                <div class="summary-info">
+                    <span class="summary-label">Disponibles aujourd'hui</span>
+                    <span class="summary-count">{{ available_count }}/{{ total_count }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <form method="GET" action="." class="filters-bar">
+            <input type="hidden" name="month" value="{{ current_month }}">
+            <input type="hidden" name="year" value="{{ year }}">
+
+            <div class="filter-group">
+                <select name="team" class="filter-btn {% if selected_team != 'all' %}active{% endif %}"
+                        onchange="this.form.submit()">
+                    <option value="all"     {% if selected_team == 'all' %}selected{% endif %}>👥 Toutes les équipes</option>
+                    <option value="employes"{% if selected_team == 'employes' %}selected{% endif %}>👤 Employés</option>
+                    <option value="rh"      {% if selected_team == 'rh' %}selected{% endif %}>🧑‍💼 RH</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <select name="type" class="filter-btn {% if selected_type != 'all' %}active{% endif %}"
+                        onchange="this.form.submit()">
+                    <option value="all"       {% if selected_type == 'all' %}selected{% endif %}>🔍 Tous les types</option>
+                    <option value="congé"     {% if selected_type == 'congé' %}selected{% endif %}>🔴 Congé</option>
+                    <option value="formation" {% if selected_type == 'formation' %}selected{% endif %}>🟤 Formation</option>
+                    <option value="maladie"   {% if selected_type == 'maladie' %}selected{% endif %}>🩺 Maladie</option>
+                    <option value="repos"     {% if selected_type == 'repos' %}selected{% endif %}>⚫ Repos</option>
+                </select>
+            </div>
+
+            <div class="month-navigation">
+                <a href="?month={{ prev_month }}&year={{ prev_year }}&team={{ selected_team }}&type={{ selected_type }}"
+                   class="nav-btn" style="text-decoration:none;">‹</a>
+                <span class="current-month" id="current-month">{{ month }}</span>
+                <a href="?month={{ next_month }}&year={{ next_year }}&team={{ selected_team }}&type={{ selected_type }}"
+                   class="nav-btn" style="text-decoration:none;">›</a>
+            </div>
+        </form>
+
+        <!-- Planning Grid -->
+        <div class="planning-grid">
+            <!-- Column Headers (Days) -->
+            <div class="grid-header">
+                <div class="employee-column">Membre</div>
+                <div class="days-header" id="days-header">
+                    {% for day in days_range %}
+                    <div class="day-cell">{{ day }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Employee Rows -->
+            <div class="grid-body">
+                {% for employee in employees %}
+                <div class="employee-row" data-employee-id="{{ employee.id }}">
+                    <div class="employee-info">
+                        <div class="employee-avatar" style="background-color: {{ employee.avatar_color }};">
+                            {{ employee.avatar_initials }}
+                        </div>
+                        <div class="employee-details">
+                            <div class="employee-name">{{ employee.name }}</div>
+                            <div class="employee-role">{{ employee.role }}</div>
+                        </div>
+                    </div>
+                    <div class="days-row">
+                        {% for day_data in employee.days_data %}
+                        {% if day_data.has_absence %}
+                        <div class="day-cell absence" data-type="{{ day_data.type }}" title="{{ day_data.label }}">{{ day_data.label }}</div>
+                        {% else %}
+                        <div class="day-cell"></div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</body>
+</html>

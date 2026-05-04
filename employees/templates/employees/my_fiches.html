@@ -1,0 +1,92 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mes fiches de paie</title>
+  <link rel="stylesheet" href="{% static 'employees/css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'employees/css/fiches_employe.css' %}">
+</head>
+<body>
+  {% include 'employees/sidebar.html' %}
+  <main class="main">
+    {% include 'employees/topbar.html' %}
+    <div class="content">
+
+      <div class="fdp-header">
+        <div>
+          <h1 class="fdp-title">Mes fiches de paie</h1>
+          <p class="fdp-subtitle">Consultez et téléchargez vos bulletins de salaire</p>
+        </div>
+        <form method="GET">
+          <select name="year" class="fdp-year-select" onchange="this.form.submit()">
+            {% for y in years %}
+            <option value="{{ y }}" {% if y == selected_year %}selected{% endif %}>{{ y }}</option>
+            {% endfor %}
+          </select>
+        </form>
+      </div>
+
+      {% if fiches %}
+      <div class="fdp-grid">
+        {% for fiche in fiches %}
+        <div class="fdp-card">
+
+          <div class="fdp-card-top">
+            <div class="fdp-icon-circle">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="#7D1E2E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <polyline points="14,2 14,8 20,8" stroke="#7D1E2E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <line x1="16" y1="13" x2="8" y2="13" stroke="#7D1E2E" stroke-width="2" stroke-linecap="round"/>
+                <line x1="16" y1="17" x2="8" y2="17" stroke="#7D1E2E" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <div class="fdp-month-year">{{ fiche.month }} {{ fiche.year }}</div>
+              <div class="fdp-type">Bulletin de salaire</div>
+            </div>
+          </div>
+
+          <div class="fdp-divider"></div>
+
+          <div class="fdp-amount-section">
+            <span class="fdp-amount-label">Salaire net</span>
+            <span class="fdp-amount">{{ fiche.amount|floatformat:2 }} €</span>
+          </div>
+
+          <div class="fdp-actions">
+            <a href="{% url 'view_pay_slip_employee' fiche.id %}" target="_blank" class="btn-fdp-voir">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+              </svg>
+              Voir
+            </a>
+            <a href="{% url 'download_pay_slip' fiche.id %}" class="btn-fdp-pdf">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <polyline points="7,10 12,15 17,10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              PDF
+            </a>
+          </div>
+
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="fdp-empty">
+        <svg width="52" height="52" viewBox="0 0 24 24" fill="none">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="#D1D5DB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <polyline points="14,2 14,8 20,8" stroke="#D1D5DB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <p>Aucune fiche de paie disponible.</p>
+      </div>
+      {% endif %}
+
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,112 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Validation des demandes - RH</title>
+  <link rel="stylesheet" href="{% static 'rh/css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'rh/css/home.css' %}">
+  <link rel="stylesheet" href="{% static 'rh/css/validation.css' %}">
+
+</head>
+<body>
+  {% include 'rh/sidebar.html' %}
+  <main class="main">
+    {% include 'rh/topbar.html' %}
+    <div class="content">
+      <div class="validation-container">
+
+        <!-- Header -->
+        <div class="page-header">
+          <h1>Validation des absences</h1>
+          <p class="pending-notice">
+            <span class="notice-icon">⚠️</span>
+            <strong>{{ pending_count }} demande{{ pending_count|pluralize }}</strong> en attente de validation
+          </p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+          <a href="?tab=a_valider" class="tab-btn {% if tab == 'a_valider' %}active{% endif %}">
+            À valider
+            {% if pending_count > 0 %}
+            <span class="tab-badge">{{ pending_count }}</span>
+            {% endif %}
+          </a>
+          <a href="?tab=toutes" class="tab-btn {% if tab == 'toutes' %}active{% endif %}">
+            Toutes les demandes
+          </a>
+          <a href="?tab=historique" class="tab-btn {% if tab == 'historique' %}active{% endif %}">
+            Historique
+          </a>
+        </div>
+
+        <!-- Cards -->
+        <div class="cards-list">
+          {% for conge in conges %}
+          <div class="conge-card">
+
+            <!-- Avatar -->
+            <div class="card-avatar" style="background-color: {{ conge.avatar_color }};">
+              {{ conge.avatar_initials }}
+            </div>
+
+            <!-- Body -->
+            <div class="card-body">
+              <div class="card-name-row">
+                <span class="card-name">{{ conge.employee_name }}</span>
+                <span class="type-badge">{{ conge.type_label }}</span>
+                {% if tab != 'a_valider' %}
+                  {% if conge.status == 'Accepté' %}
+                  <span class="status-badge accepte">✓ Accepté</span>
+                  {% elif conge.status == 'Refusé' %}
+                  <span class="status-badge refuse">✗ Refusé</span>
+                  {% elif conge.status == 'Pending' %}
+                  <span class="status-badge pending">⏳ En attente</span>
+                  {% endif %}
+                {% endif %}
+              </div>
+              <div class="card-dates">
+                📅 {{ conge.start_date }} → {{ conge.end_date }}
+                <span class="days-count">({{ conge.days }} jour{{ conge.days|pluralize }})</span>
+              </div>
+              <div class="card-reason">
+                <span>Commentaire:</span> {{ conge.reason }}
+              </div>
+              {% if conge.created_at %}
+              <p class="card-submitted">Soumis le {{ conge.created_at }}</p>
+              {% endif %}
+            </div>
+
+            <!-- Actions -->
+            {% if conge.status == 'Pending' %}
+            <div class="card-actions">
+              <form method="POST" action="{% url 'traiter_conge' conge.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="tab" value="{{ tab }}">
+                <button type="submit" name="action" value="approuver" class="btn-approve">
+                  ✓ Approuver
+                </button>
+              </form>
+              <form method="POST" action="{% url 'traiter_conge' conge.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="tab" value="{{ tab }}">
+                <button type="submit" name="action" value="refuser" class="btn-refuse">
+                  ✗ Refuser
+                </button>
+              </form>
+            </div>
+            {% endif %}
+
+          </div>
+          {% empty %}
+          <div class="empty-state">Aucune demande à afficher.</div>
+          {% endfor %}
+        </div>
+
+      </div>
+    </div>
+  </main>
+</body>
+</html>

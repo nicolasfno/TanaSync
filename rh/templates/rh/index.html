@@ -1,0 +1,139 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TanaSync — Accueil RH</title>
+  <link rel="stylesheet" href="{% static 'rh/css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'rh/css/home.css' %}">
+  <link rel="stylesheet" href="{% static 'rh/css/validation.css' %}">
+</head>
+<body>
+
+  {% include 'rh/sidebar.html' %}
+
+  <main class="main">
+
+    {% include 'rh/topbar.html' %}
+
+    <div class="content">
+
+      <section class="dashboard-top">
+        <div class="page-header">
+          <h1 class="page-title">Bonjour, {{ user.first_name }} — Vue Manager <span class="wave-emoji">👋</span></h1>
+          <p class="page-subtitle">Gérez votre équipe et validez les demandes</p>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-card-info">
+              <span class="stat-label">Effectif total</span>
+              <span class="stat-value">{{ total_employees }}</span>
+            </div>
+            <div class="stat-card-icon">👥</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-card-info">
+              <span class="stat-label">Demandes en attente</span>
+              <span class="stat-value">{{ pending_count }}</span>
+            </div>
+            <div class="stat-card-icon">⏳</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-card-info">
+              <span class="stat-label">En congé aujourd'hui</span>
+              <span class="stat-value">{{ on_leave_today }}</span>
+            </div>
+            <div class="stat-card-icon">📅</div>
+          </div>
+        </div>
+      </section>
+
+      <div class="alerts-grid">
+        <div class="alert-card">
+          <div class="alert-card-body">
+            <span class="alert-icon">⚠️</span>
+            <div>
+              <p class="alert-title">2 fiches de paie à publier</p>
+              <p class="alert-text">Publiez les bulletins avant la fin de la semaine.</p>
+            </div>
+          </div>
+          <a href="#" class="btn btn-primary">Publier maintenant</a>
+        </div>
+
+        <div class="alert-card">
+          <div class="alert-card-body">
+            <span class="alert-icon">ℹ️</span>
+            <div>
+              <p class="alert-title">Formation obligatoire dans 5 jours</p>
+              <p class="alert-text">Vérifiez la présence et préparez le planning.</p>
+            </div>
+          </div>
+          <a href="#" class="btn btn-outline">Voir détails</a>
+        </div>
+      </div>
+
+      <div class="card requests-card">
+        <div class="requests-header">
+          <div>
+            <h2 class="card-title">Demandes en attente</h2>
+            <p class="card-subtitle">Dernières demandes de congés à traiter</p>
+          </div>
+          <a href="{% url 'validation_demandes' %}" class="requests-link">Voir tout</a>
+        </div>
+
+        <div class="cards-list">
+          {% for conge in pending_conges %}
+          <div class="conge-card">
+            <div class="card-avatar" style="background-color: {{ conge.avatar_color }};">
+              {{ conge.avatar_initials }}
+            </div>
+            <div class="card-body">
+              <div class="card-name-row">
+                <span class="card-name">{{ conge.employee_name }}</span>
+                <span class="type-badge">{{ conge.type_label }}</span>
+                <span class="status-badge pending">⏳ En attente</span>
+              </div>
+              <div class="card-dates">
+                📅 {{ conge.start_date }} → {{ conge.end_date }}
+                <span class="days-count">({{ conge.days }} jour{{ conge.days|pluralize }})</span>
+              </div>
+              <div class="card-reason">
+                <span>Commentaire:</span> {{ conge.reason }}
+              </div>
+              {% if conge.created_at %}
+              <p class="card-submitted">Soumis le {{ conge.created_at }}</p>
+              {% endif %}
+            </div>
+            <div class="card-actions">
+              <form method="POST" action="{% url 'traiter_conge' conge.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="tab" value="a_valider">
+                <button type="submit" name="action" value="approuver" class="btn-approve">
+                  ✓ Approuver
+                </button>
+              </form>
+              <form method="POST" action="{% url 'traiter_conge' conge.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="tab" value="a_valider">
+                <button type="submit" name="action" value="refuser" class="btn-refuse">
+                  ✗ Refuser
+                </button>
+              </form>
+            </div>
+          </div>
+          {% empty %}
+          <div class="empty-state">Aucune demande en attente.</div>
+          {% endfor %}
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+</body>
+</html>

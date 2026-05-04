@@ -33,7 +33,7 @@
           <div class="stat-card-body">
             <div class="stat-card-info">
               <span class="stat-label">Jours de congés restants</span>
-              <span class="stat-value">12 jours</span>
+              <span class="stat-value">{{ jours_restants }} jour{{ jours_restants|pluralize }}</span>
             </div>
             <span class="stat-icon">🏖️</span>
           </div>
@@ -42,7 +42,7 @@
           <div class="stat-card-body">
             <div class="stat-card-info">
               <span class="stat-label">Prochaine paie</span>
-              <span class="stat-value">28 Jan 2025</span>
+              <span class="stat-value">{{ prochaine_paie|default:"—" }}</span>
             </div>
             <span class="stat-icon">💰</span>
           </div>
@@ -63,7 +63,7 @@
       <div class="quick-actions">
         <h2 class="section-title">Actions rapides</h2>
         <div class="quick-actions-buttons">
-          <a class="btn btn-primary" href="{% url 'absence' %}">📅 Nouvelle demande d'absence</a>
+          <a class="btn btn-primary" href="{% url 'mes_absences' %}">📅 Nouvelle demande d'absence</a>
           <a class="btn btn-outline" href="{% url 'planning' %}">Voir mon planning</a>
         </div>
       </div>
@@ -75,34 +75,23 @@
         <div class="card">
           <h2 class="card-title">Activités récentes</h2>
           <ul class="activity-list">
-            <li class="activity-item">
-              <div class="activity-icon activity-icon--green">✅</div>
-              <div class="activity-content">
-                <span class="activity-text">Votre demande de congé a été approuvée</span>
-                <span class="activity-time">Il y a 2 heures</span>
-              </div>
-            </li>
-            <li class="activity-item">
-              <div class="activity-icon activity-icon--rose">📄</div>
-              <div class="activity-content">
-                <span class="activity-text">Nouvelle fiche de paie disponible</span>
-                <span class="activity-time">Il y a 5 heures</span>
-              </div>
-            </li>
-            <li class="activity-item">
-              <div class="activity-icon activity-icon--blue">💬</div>
-              <div class="activity-content">
-                <span class="activity-text">Message de Sophie Martin</span>
-                <span class="activity-time">Hier à 14:30</span>
-              </div>
-            </li>
-            <li class="activity-item activity-item--last">
-              <div class="activity-icon activity-icon--yellow">📅</div>
-              <div class="activity-content">
-                <span class="activity-text">Rappel : Formation UX dans 3 jours</span>
-                <span class="activity-time">Hier à 08:00</span>
-              </div>
-            </li>
+            {% if activities %}
+              {% for activity in activities %}
+              <li class="activity-item {% if forloop.last %}activity-item--last{% endif %}">
+                <div class="activity-icon activity-icon--{{ activity.icon_class }}">{{ activity.icon }}</div>
+                <div class="activity-content">
+                  <span class="activity-text">{{ activity.text }}</span>
+                  <span class="activity-time">{{ activity.date_label }}</span>
+                </div>
+              </li>
+              {% endfor %}
+            {% else %}
+              <li class="activity-item activity-item--last">
+                <div class="activity-content">
+                  <span class="activity-text">Aucune activité récente.</span>
+                </div>
+              </li>
+            {% endif %}
           </ul>
         </div>
 

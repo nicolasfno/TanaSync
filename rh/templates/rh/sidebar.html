@@ -1,0 +1,48 @@
+{% load static %}
+
+<aside class="sidebar">
+  <!-- Logo -->
+  <div class="sidebar-logo">
+    <img src="{% static 'employees/logo.svg' %}" alt="Logo TanaSync" width="100" height="100">
+    <span class="sidebar-logo-text"></span>
+  </div>
+
+  <hr class="sidebar-divider">
+
+  <!-- Navigation principale -->
+  <nav class="sidebar-nav">
+    <a href="{% url 'home_rh' %}" class="nav-item {% if request.resolver_match.url_name == 'home_rh' %}active{% endif %}">
+      <img src="{% static 'employees/home.svg' %}" alt="" width="24" height="24">
+      <span>Accueil</span>
+    </a>
+
+    <a href="{% url 'validation_demandes' %}" class="nav-item {% if request.resolver_match.url_name == 'validation_demandes' %}active{% endif %}">
+      <img src="{% static 'employees/liste.svg' %}" alt="" width="24" height="24">
+      <span>Validation des demandes</span>
+      <span class="nav-badge">6</span>
+    </a>
+    <a href="{% url 'planning_global' %}" class="nav-item {% if request.resolver_match.url_name == 'planning_global' %}active{% endif %}">
+      <img src="{% static 'employees/calendrier.svg' %}" alt="" width="24" height="24">
+      <span>Planning global</span>
+    </a>
+    <a href="{% url 'absences_rh' %}" class="nav-item {% if request.resolver_match.url_name == 'absences_rh' %}active{% endif %}">
+      <img src="{% static 'employees/abscences.svg' %}" alt="" width="24" height="24">
+      <span>Absences</span>
+    </a>
+    <a href="{% url 'fiches_de_paie_rh' %}" class="nav-item {% if request.resolver_match.url_name == 'fiches_de_paie_rh' %}active{% endif %}">
+      <img src="{% static 'employees/liste.svg' %}" alt="" width="24" height="24">
+      <span>Fiches de paie</span>
+    </a>
+    <a href="{% url 'planning_rh' %}" class="nav-item {% if request.resolver_match.url_name == 'planning_rh' %}active{% endif %}">
+      <img src="{% static 'employees/calendrier.svg' %}" alt="" width="24" height="24">
+      <span>Planning</span>
+    </a>
+  </nav>
+
+  <!-- Footer sidebar -->
+  <div class="sidebar-footer">
+
+    <button class="sidebar-collapse-btn" aria-label="Réduire la sidebar">‹</button>
+  </div>
+</aside>
+

@@ -1,0 +1,474 @@
+/* ==================== PLANNING GLOBAL STYLES ==================== */
+
+.planning-container {
+    padding: 30px;
+    background: #f8f9fa;
+    min-height: 100vh;
+}
+
+/* Header Section */
+.planning-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 30px;
+}
+
+.header-title h1 {
+    font-size: 2.2rem;
+    color: #1a1a1a;
+    margin: 0 0 6px 0;
+    font-weight: 700;
+}
+
+.header-title p {
+    font-size: 1rem;
+    color: #666;
+    margin: 0;
+}
+
+.export-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border: 2px solid #d32f2f;
+    background: white;
+    color: #d32f2f;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.export-btn:hover {
+    background: #d32f2f;
+    color: white;
+}
+
+.download-icon {
+    font-size: 1.2rem;
+}
+
+/* Availability Summary */
+.availability-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, #e8f5e9 0%, #e3f2fd 100%);
+    padding: 20px 25px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.summary-content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.summary-icon {
+    font-size: 3rem;
+}
+
+.summary-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.summary-label {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+}
+
+.summary-count {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: white;
+}
+
+.summary-avatars {
+    display: flex;
+    gap: -15px;
+}
+
+.avatar-initials {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: white;
+    font-size: 0.8rem;
+    border: 2px solid white;
+    margin-left: -12px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
+.avatar-initials:first-child {
+    margin-left: 0;
+}
+
+/* Filters Bar */
+.filters-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 20px 25px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.filter-group {
+    display: flex;
+    gap: 15px;
+}
+
+.filter-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: white;
+    border: 1px solid #bdc3c7;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: #34495e;
+    transition: all 0.3s ease;
+}
+
+select.filter-btn {
+    appearance: auto;
+    min-width: 180px;
+}
+
+.filter-btn:hover {
+    border-color: #3498db;
+    background: #ecf0f1;
+}
+
+.filter-btn.active {
+    background: #ecf0f1;
+    border-color: #3498db;
+    color: #3498db;
+}
+
+.filter-icon {
+    font-size: 1.1rem;
+}
+
+.dropdown-arrow {
+    font-size: 0.75rem;
+}
+
+.month-navigation {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.nav-btn {
+    background: white;
+    border: 1px solid #bdc3c7;
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.nav-btn:hover {
+    background: #3498db;
+    color: white;
+    border-color: #3498db;
+}
+
+.current-month {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    min-width: 120px;
+    text-align: center;
+}
+
+/* Planning Grid */
+.planning-grid {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.grid-header {
+    display: flex;
+    background: #f8f9fa;
+    border-bottom: 2px solid #e9ecef;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.employee-column {
+    width: 280px;
+    padding: 15px 20px;
+    font-weight: 700;
+    color: #2c3e50;
+    flex-shrink: 0;
+    border-right: 2px solid #e9ecef;
+}
+
+.days-header {
+    display: flex;
+    flex: 1;
+    overflow-x: auto;
+}
+
+.days-header .day-cell {
+    flex: 0 0 65px;
+    padding: 15px 0;
+    text-align: center;
+    font-weight: 600;
+    color: #34495e;
+    font-size: 0.9rem;
+}
+
+/* Grid Body */
+.grid-body {
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.employee-row {
+    display: flex;
+    border-bottom: 1px solid #ecf0f1;
+    transition: background-color 0.3s ease;
+}
+
+.employee-row:hover {
+    background-color: #f8f9fa;
+}
+
+.employee-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 280px;
+    padding: 15px 20px;
+    flex-shrink: 0;
+    border-right: 2px solid #e9ecef;
+}
+
+.employee-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: white;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.employee-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.employee-name {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 0.95rem;
+}
+
+.employee-role {
+    font-size: 0.8rem;
+    color: #7f8c8d;
+}
+
+.days-row {
+    display: flex;
+    flex: 1;
+    overflow-x: auto;
+}
+
+.day-cell {
+    flex: 0 0 65px;
+    padding: 15px 8px;
+    text-align: center;
+    border-right: 1px solid #ecf0f1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 500;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.day-cell:hover {
+    background-color: #f0f8ff;
+}
+
+/* Absence/Available States */
+.day-cell.absence {
+    font-weight: 700;
+    color: white;
+    border-radius: 4px;
+    margin: 5px 2px;
+}
+
+.day-cell.absence[data-type="congé"] {
+    background-color: #8B4454;
+    color: white;
+}
+
+.day-cell.absence[data-type="formation"] {
+    background-color: #CD7F32;
+    color: white;
+}
+
+.day-cell.absence[data-type="maladie"] {
+    background-color: #DC143C;
+    color: white;
+}
+
+.day-cell.absence[data-type="repos"] {
+    background-color: #696969;
+    color: white;
+}
+
+.day-cell.available {
+    font-weight: 700;
+    color: white;
+    border-radius: 4px;
+    margin: 5px 2px;
+}
+
+.day-cell.available[data-type="TT"] {
+    background-color: #20B2AA;
+    color: white;
+}
+
+.day-cell.available[data-type="presentiel"] {
+    background-color: #6ECB63;
+    color: white;
+}
+
+/* Scrollbar Styling */
+.grid-body::-webkit-scrollbar,
+.days-header::-webkit-scrollbar,
+.days-row::-webkit-scrollbar {
+    height: 8px;
+}
+
+.grid-body::-webkit-scrollbar-track,
+.days-header::-webkit-scrollbar-track,
+.days-row::-webkit-scrollbar-track {
+    background: #ecf0f1;
+}
+
+.grid-body::-webkit-scrollbar-thumb,
+.days-header::-webkit-scrollbar-thumb,
+.days-row::-webkit-scrollbar-thumb {
+    background: #95a5a6;
+    border-radius: 4px;
+}
+
+.grid-body::-webkit-scrollbar-thumb:hover,
+.days-header::-webkit-scrollbar-thumb:hover,
+.days-row::-webkit-scrollbar-thumb:hover {
+    background: #7f8c8d;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .planning-container {
+        padding: 20px;
+    }
+
+    .planning-header {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .employee-column {
+        width: 200px;
+    }
+
+    .employee-info {
+        width: 200px;
+    }
+
+    .day-cell {
+        flex: 0 0 50px;
+        padding: 12px 4px;
+        font-size: 0.7rem;
+    }
+
+    .header-title h1 {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .planning-container {
+        padding: 15px;
+    }
+
+    .availability-summary {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .filters-bar {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .filter-group {
+        width: 100%;
+    }
+
+    .filter-btn {
+        width: 100%;
+    }
+
+    .month-navigation {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .employee-column {
+        width: 150px;
+    }
+
+    .employee-info {
+        width: 150px;
+        gap: 10px;
+    }
+
+    .day-cell {
+        flex: 0 0 40px;
+    }
+
+    .summary-avatars {
+        flex-wrap: wrap;
+    }
+}
