@@ -4,19 +4,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Planning - RH</title>
+  <title>Planning — TanaSync RH</title>
   <link rel="stylesheet" href="{% static 'rh/css/base.css' %}">
   <link rel="stylesheet" href="{% static 'rh/css/home.css' %}">
+  <link rel="stylesheet" href="{% static 'employees/css/calendrier.css' %}">
 </head>
 <body>
   {% include 'rh/sidebar.html' %}
   <main class="main">
     {% include 'rh/topbar.html' %}
     <div class="content">
+
       <div class="page-header">
-        <h1 class="page-title">Planning</h1>
-        <p class="page-subtitle">Page RH vide pour le moment.</p>
+        <h1 class="page-title">Mon planning 📅</h1>
+        <p class="page-subtitle">Vos congés acceptés sont surlignés en vert</p>
       </div>
+
+      <div class="card planning-calendar">
+        {% include 'employees/calendrier.html' %}
+      </div>
+
     </div>
   </main>
 </body>

@@ -13,6 +13,60 @@ from datetime import datetime
 
 
 # Create your views here.
+def _build_calendar_context(profile, year=None, month=None):
+    """Calcule les données du calendrier pour le mois demandé (ou le mois en cours)."""
+    from datetime import date, timedelta
+    import calendar as cal_lib
+
+    today = date.today()
+    if year is None:
+        year = today.year
+    if month is None:
+        month = today.month
+
+    last_day = cal_lib.monthrange(year, month)[1]
+
+    # Congés acceptés qui couvrent au moins un jour de ce mois
+    conges_acceptes = Conge.objects.filter(
+        employee_profile=profile,
+        status='Accepté',
+        start_date__lte=date(year, month, last_day),
+        end_date__gte=date(year, month, 1),
+    )
+    conge_days = set()
+    for c in conges_acceptes:
+        cur = max(c.start_date, date(year, month, 1))
+        fin = min(c.end_date, date(year, month, last_day))
+        while cur <= fin:
+            conge_days.add(cur.day)
+            cur += timedelta(days=1)
+
+    MOIS_FR = {
+        1: 'Janvier', 2: 'Février', 3: 'Mars', 4: 'Avril',
+        5: 'Mai', 6: 'Juin', 7: 'Juillet', 8: 'Août',
+        9: 'Septembre', 10: 'Octobre', 11: 'Novembre', 12: 'Décembre'
+    }
+
+    # Calcul mois précédent et suivant
+    prev_month = 12 if month == 1 else month - 1
+    prev_year  = year - 1 if month == 1 else year
+    next_month = 1  if month == 12 else month + 1
+    next_year  = year + 1 if month == 12 else year
+
+    cal = cal_lib.Calendar(firstweekday=6)  # Dimanche en premier
+    return {
+        'month_days':    cal.monthdayscalendar(year, month),
+        # today vaut -1 si on n'est pas sur le mois actuel → aucun jour ne sera surligné
+        'today':         today.day if (today.year == year and today.month == month) else -1,
+        'cal_month_name': f"{MOIS_FR[month]} {year}",
+        'conge_days':    conge_days,
+        'cal_prev_month': prev_month,
+        'cal_prev_year':  prev_year,
+        'cal_next_month': next_month,
+        'cal_next_year':  next_year,
+    }
+
+
 @login_required
 def home_employee(request):
     profile = request.user.employee_profile
@@ -53,6 +107,7 @@ def home_employee(request):
         'jours_restants': ctx['jours_restants'],
         'prochaine_paie': prochaine_paie,
         'activities': activities,
+        **_build_calendar_context(profile),
     })
 
 
@@ -183,8 +238,19 @@ def download_pay_slip(request, fiche_id):
     return response
 
 
+@login_required
 def planning(request):
-    return render(request, "employees/planning.html")
+    profile = request.user.employee_profile
+    try:
+        month = int(request.GET.get('month', 0)) or None
+        year  = int(request.GET.get('year',  0)) or None
+    except (ValueError, TypeError):
+        month, year = None, None
+
+    ctx = _build_calendar_context(profile, year, month)
+    ctx['cal_prev_url'] = reverse('planning') + f"?month={ctx['cal_prev_month']}&year={ctx['cal_prev_year']}"
+    ctx['cal_next_url'] = reverse('planning') + f"?month={ctx['cal_next_month']}&year={ctx['cal_next_year']}"
+    return render(request, "employees/planning.html", ctx)
 
 
 def fdp(request):

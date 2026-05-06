@@ -1,39 +1,56 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calendrier</title>
-</head>
-<body>
-    <div class="calendar-card">
-    <div class="calendar-header">
-        <button class="nav-btn">bubu</button>
-        <h2>Mois</h2>
-        <button class="nav-btn">bubu</button>
-    </div>
-        <table class="calendar-table">
-            <thead>
-                <tr>
-                    <th>Dim</th><th>Lun</th><th>Mar</th><th>Mer</th><th>Jeu</th><th>Ven</th><th>Sam</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for week in month_days %}
-                <tr>
-                    {% For day in week %}
-                    <td>
-                        {% if day != 0 %}
-                            <span class="{{ 'today' if day == today else''}}">
-                                {{ day }}
-                            </span>
-                        {% endif %}
-                    </td>
-                    {% endfor %}
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</body>
-</html>
+
+<div class="calendar-card">
+
+  <div class="calendar-header">
+    {% if cal_prev_url %}
+      <a href="{{ cal_prev_url }}" class="nav-btn">‹</a>
+    {% else %}
+      <button class="nav-btn" disabled>‹</button>
+    {% endif %}
+
+    <h2>{{ cal_month_name }}</h2>
+
+    {% if cal_next_url %}
+      <a href="{{ cal_next_url }}" class="nav-btn">›</a>
+    {% else %}
+      <button class="nav-btn" disabled>›</button>
+    {% endif %}
+  </div>
+
+  <table class="calendar-table">
+    <thead>
+      <tr>
+        <th>Dim</th><th>Lun</th><th>Mar</th><th>Mer</th>
+        <th>Jeu</th><th>Ven</th><th>Sam</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for week in month_days %}
+      <tr>
+        {% for day in week %}
+        <td>
+          {% if day != 0 %}
+
+            {% if day == today %}
+              {# Aujourd'hui → fond lit de vin #}
+              <span class="today">{{ day }}</span>
+
+            {% elif day in conge_days %}
+              {# Jour de congé accepté → fond vert #}
+              <span class="conge">{{ day }}</span>
+
+            {% else %}
+              {# Jour normal #}
+              <span>{{ day }}</span>
+
+            {% endif %}
+
+          {% endif %}
+        </td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+</div>

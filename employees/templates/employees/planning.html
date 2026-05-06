@@ -1,20 +1,30 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Planning</title>
-    
-    <link rel="stylesheet" href="{% static 'employees/css/base.css' %}">
-    
-    
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mon Planning — TanaSync</title>
+  <link rel="stylesheet" href="{% static 'employees/css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'employees/css/home.css' %}">
+  <link rel="stylesheet" href="{% static 'employees/css/calendrier.css' %}">
 </head>
 <body>
-    {% include 'employees/sidebar.html' %}
-    <main class="main">
-        {% include 'employees/topbar.html' %}
-    </main>
+  {% include 'employees/sidebar.html' %}
+  <main class="main">
+    {% include 'employees/topbar.html' %}
+    <div class="content">
+
+      <div class="page-header">
+        <h1 class="page-title">Mon planning 📅</h1>
+        <p class="page-subtitle">Vos congés acceptés sont surlignés en vert</p>
+      </div>
+
+      <div class="card planning-calendar">
+        {% include 'employees/calendrier.html' %}
+      </div>
+
+    </div>
+  </main>
 </body>
 </html>

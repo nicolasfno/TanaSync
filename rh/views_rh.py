@@ -439,7 +439,60 @@ def fiches_de_paie_rh(request):
 @login_required
 @user_passes_test(is_hr)
 def planning_rh(request):
-    return render(request, "rh/planning_rh.html")
+    from datetime import date, timedelta
+    import calendar as cal_lib
+
+    try:
+        profile = request.user.employee_profile
+    except Exception:
+        from employees.models import EmployeeProfile
+        profile, _ = EmployeeProfile.objects.get_or_create(user=request.user, defaults={'role': 'RH'})
+
+    try:
+        month = int(request.GET.get('month', 0)) or None
+        year  = int(request.GET.get('year',  0)) or None
+    except (ValueError, TypeError):
+        month, year = None, None
+
+    today = date.today()
+    year  = year  or today.year
+    month = month or today.month
+    last_day = cal_lib.monthrange(year, month)[1]
+
+    conges_acceptes = Conge.objects.filter(
+        employee_profile=profile,
+        status='Accepté',
+        start_date__lte=date(year, month, last_day),
+        end_date__gte=date(year, month, 1),
+    )
+    conge_days = set()
+    for c in conges_acceptes:
+        cur = max(c.start_date, date(year, month, 1))
+        fin = min(c.end_date, date(year, month, last_day))
+        while cur <= fin:
+            conge_days.add(cur.day)
+            cur += timedelta(days=1)
+
+    MOIS_FR = {
+        1: 'Janvier', 2: 'Février', 3: 'Mars', 4: 'Avril',
+        5: 'Mai', 6: 'Juin', 7: 'Juillet', 8: 'Août',
+        9: 'Septembre', 10: 'Octobre', 11: 'Novembre', 12: 'Décembre'
+    }
+    cal = cal_lib.Calendar(firstweekday=6)
+
+    prev_month = 12 if month == 1 else month - 1
+    prev_year  = year - 1 if month == 1 else year
+    next_month = 1  if month == 12 else month + 1
+    next_year  = year + 1 if month == 12 else year
+
+    return render(request, "rh/planning_rh.html", {
+        'month_days':    cal.monthdayscalendar(year, month),
+        'today':         today.day if (today.year == year and today.month == month) else -1,
+        'cal_month_name': f"{MOIS_FR[month]} {year}",
+        'conge_days':    conge_days,
+        'cal_prev_url':  reverse('planning_rh') + f"?month={prev_month}&year={prev_year}",
+        'cal_next_url':  reverse('planning_rh') + f"?month={next_month}&year={next_year}",
+    })
 
 
 # ==================== PLANNING GLOBAL ====================
