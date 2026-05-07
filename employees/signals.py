@@ -5,6 +5,6 @@ from .models import EmployeeProfile
 
 
 @receiver(post_save, sender=User)
-def create_employee_profile(sender, instance, created, **kwargs):
+def create_employee_profile(instance, created, **_):
     if created:
         EmployeeProfile.objects.get_or_create(user=instance)

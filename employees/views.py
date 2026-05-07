@@ -5,6 +5,7 @@ from rh.models import Conge, ficheDePaie
 from rh.views import _build_absences_context, _get_conge_type_label, MONTH_NAMES_FR
 from django.http import JsonResponse, HttpResponse, Http404, FileResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.views import LoginView
 import json
 import os
 from django.contrib.auth.decorators import login_required
@@ -12,7 +13,17 @@ import calendar
 from datetime import datetime
 
 
-# Create your views here.
+class RoleLoginView(LoginView):
+    template_name = 'registration/login.html'
+
+    def get_success_url(self):
+        user = self.request.user
+        try:
+            if user.employee_profile.role == 'RH':
+                return reverse('home_rh')
+        except Exception:
+            pass
+        return reverse('home_employee')
 def _build_calendar_context(profile, year=None, month=None):
     """Calcule les données du calendrier pour le mois demandé (ou le mois en cours)."""
     from datetime import date, timedelta

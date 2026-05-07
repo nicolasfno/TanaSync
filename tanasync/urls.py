@@ -20,12 +20,13 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import RedirectView
+from employees.views import RoleLoginView
 
 urlpatterns = [
     path('', RedirectView.as_view(url='/login/', permanent=False)),
     path('admin/', admin.site.urls),
     path('employees/', include('employees.urls')),
-    path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
+    path('login/', RoleLoginView.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('rh/', include('rh.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

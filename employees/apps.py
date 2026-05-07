@@ -5,4 +5,4 @@ class EmployeesConfig(AppConfig):
     name = 'employees'
 
     def ready(self):
-        import employees.signals  # noqa: F401
+        import employees.signals  
