@@ -1,7 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "PowerShell(\\(Get-Content \"c:\\\\Users\\\\Benjamin\\\\Desktop\\\\tanasync\\\\TanaSync\\\\rh\\\\views.py\"\\).Count)"
-    ]
-  }
-}
