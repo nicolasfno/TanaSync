@@ -7,6 +7,7 @@
   <title>TanaSync — Accueil</title>
   <link rel="stylesheet" href="{% static 'employees/css/base.css' %}">
   <link rel="stylesheet" href="{% static 'employees/css/home.css' %}">
+  <link rel="stylesheet" href="{% static 'employees/css/calendrier.css' %}">
 </head>
 <body>
 
@@ -86,68 +87,12 @@
           </ul>
         </div>
 
-        <!-- Calendrier -->
+        <!-- Calendrier (cliquer pour aller sur la page planning) -->
         <div class="card">
           <h2 class="card-title">Calendrier</h2>
-          <div class="calendar">
-            <!-- Header calendrier -->
-            <div class="calendar-header">
-              <button class="calendar-nav-btn" aria-label="Mois précédent">‹</button>
-              <span class="calendar-month">April 2026</span>
-              <button class="calendar-nav-btn" aria-label="Mois suivant">›</button>
-            </div>
-            <!-- Jours de la semaine -->
-            <div class="calendar-weekdays">
-              <span>Su</span>
-              <span>Mo</span>
-              <span>Tu</span>
-              <span>We</span>
-              <span>Th</span>
-              <span>Fr</span>
-              <span>Sa</span>
-            </div>
-            <!-- Grille des jours -->
-            <div class="calendar-days">
-              <!-- Jours mois précédent -->
-              <span class="day day--other">29</span>
-              <span class="day day--other">30</span>
-              <span class="day day--other">31</span>
-              <!-- Jours avril -->
-              <span class="day">1</span>
-              <span class="day">2</span>
-              <span class="day">3</span>
-              <span class="day">4</span>
-              <span class="day">5</span>
-              <span class="day">6</span>
-              <span class="day">7</span>
-              <span class="day">8</span>
-              <span class="day">9</span>
-              <span class="day">10</span>
-              <span class="day">11</span>
-              <span class="day">12</span>
-              <span class="day">13</span>
-              <span class="day">14</span>
-              <span class="day">15</span>
-              <span class="day day--today">16</span>
-              <span class="day">17</span>
-              <span class="day">18</span>
-              <span class="day">19</span>
-              <span class="day">20</span>
-              <span class="day">21</span>
-              <span class="day">22</span>
-              <span class="day">23</span>
-              <span class="day">24</span>
-              <span class="day">25</span>
-              <span class="day">26</span>
-              <span class="day">27</span>
-              <span class="day">28</span>
-              <span class="day">29</span>
-              <span class="day">30</span>
-              <!-- Jours mois suivant -->
-              <span class="day day--other">1</span>
-              <span class="day day--other">2</span>
-            </div>
-          </div>
+          <a href="{% url 'planning' %}" class="calendar-link" title="Voir mon planning complet">
+            {% include 'employees/calendrier.html' %}
+          </a>
         </div>
 
       </div>
