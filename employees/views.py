@@ -69,7 +69,8 @@ def _build_calendar_context(profile, year=None, month=None):
 
 @login_required
 def home_employee(request):
-    profile = request.user.employee_profile
+    from employees.models import EmployeeProfile
+    profile, _ = EmployeeProfile.objects.get_or_create(user=request.user)
     ctx = _build_absences_context(profile, 'mes_demandes')
 
     activities = []
@@ -169,7 +170,8 @@ def mes_absences(request):
     La logique de données est déléguée à rh.views._build_absences_context
     pour éviter tout doublon avec la page absences RH.
     """
-    profile = request.user.employee_profile
+    from employees.models import EmployeeProfile
+    profile, _ = EmployeeProfile.objects.get_or_create(user=request.user)
     tab = request.GET.get('tab', 'nouvelle')
 
     if request.method == 'POST':
@@ -240,7 +242,8 @@ def download_pay_slip(request, fiche_id):
 
 @login_required
 def planning(request):
-    profile = request.user.employee_profile
+    from employees.models import EmployeeProfile
+    profile, _ = EmployeeProfile.objects.get_or_create(user=request.user)
     try:
         month = int(request.GET.get('month', 0)) or None
         year  = int(request.GET.get('year',  0)) or None
