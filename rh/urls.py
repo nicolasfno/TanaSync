@@ -6,7 +6,6 @@ urlpatterns = [
     path('equipe/', views.vue_equipe, name='vue_equipe'),
     path('validation-demandes/', views.validation_demandes, name='validation_demandes'),
     path('planning-global/', views.planning_global, name='planning_global'),
-    path('planning-global/export/', views.export_planning_csv, name='export_planning_csv'),
     path('absences/', views.absences_rh, name='absences_rh'),
     path('absences/annuler/<int:id>/', views.rh_annuler_conge, name='rh_annuler_conge'),
     path('fiches-paie/', views.fiches_de_paie_rh, name='fiches_de_paie_rh'),

@@ -7,7 +7,6 @@ from django.http import JsonResponse, HttpResponse, FileResponse
 import os
 from django.views.decorators.csrf import csrf_exempt
 import json
-import csv
 from .utils import create_file
 from django.contrib.auth.decorators import login_required, user_passes_test
 from datetime import datetime, timedelta
@@ -646,30 +645,6 @@ def planning_global(request):
     return render(request, "rh/planning_global.html", data)
 
 
-@login_required
-@user_passes_test(is_hr)
-def export_planning_csv(request):
-    month = int(request.GET.get('month', datetime.now().month))
-    year = int(request.GET.get('year', datetime.now().year))
-    team = request.GET.get('team', 'all')
-    absence_type = request.GET.get('type', 'all')
-
-    data = _get_planning_data(year, month, team=team, absence_type=absence_type)
-
-    response = HttpResponse(content_type='text/csv; charset=utf-8')
-    response['Content-Disposition'] = f'attachment; filename="planning_{month}_{year}.csv"'
-    response.write('﻿')  # BOM pour Excel
-
-    writer = csv.writer(response)
-    writer.writerow(['Employé', 'Rôle'] + [f'Jour {d}' for d in range(1, data['days_in_month'] + 1)])
-
-    for employee in data['employees']:
-        row = [employee['name'], employee['role']]
-        for day_data in employee['days_data']:
-            row.append(day_data['label'] if day_data['has_absence'] else '')
-        writer.writerow(row)
-
-    return response
 
 
 # ==================== API ENDPOINTS ====================
