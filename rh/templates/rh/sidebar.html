@@ -19,7 +19,6 @@
     <a href="{% url 'validation_demandes' %}" class="nav-item {% if request.resolver_match.url_name == 'validation_demandes' %}active{% endif %}">
       <img src="{% static 'employees/liste.svg' %}" alt="" width="24" height="24">
       <span>Validation des demandes</span>
-      <span class="nav-badge">6</span>
     </a>
     <a href="{% url 'planning_global' %}" class="nav-item {% if request.resolver_match.url_name == 'planning_global' %}active{% endif %}">
       <img src="{% static 'employees/calendrier.svg' %}" alt="" width="24" height="24">
